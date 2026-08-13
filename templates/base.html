@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}1300 Луғат — Русӣ ба Тоҷикӣ{% endblock %}</title>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<header class="wrap nav">
+  <div class="nav-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark"><span>🌞</span></span>
+      1300 Луғат
+    </a>
+    <nav class="nav-links">
+      {% if request.session.get('user_id') %}
+        <a href="/lessons">Дарсҳо</a>
+        <a href="/profile">Профил</a>
+        <a href="/logout">Баромадан</a>
+      {% else %}
+        <a href="/login">Даромадан</a>
+        <a class="btn btn-primary btn-sm" href="/register">Оғоз кардан</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+<main>
+{% block content %}{% endblock %}
+</main>
+<footer class="wrap">
+  1300 Луғат — Русӣ ба Тоҷикӣ · Омӯзиши забон бо дарсҳо, тест ва сертификат
+</footer>
+</body>
+</html>

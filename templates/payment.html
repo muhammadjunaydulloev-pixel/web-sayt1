@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Пардохт — 1300 Луғат{% endblock %}
+{% block content %}
+<div class="wrap-narrow">
+  <h1>Кушодани курси пурра</h1>
+  <p style="color:var(--plum-soft);">Барои дастрасӣ ба ҳамаи 26 дарс, {{ price }} сомониро ба корт гузаронед ва расидро дар ин ҷо фиристед.</p>
+
+  <div class="card">
+    <h3>Маълумоти пардохт</h3>
+    <table>
+      <tr><th>Рақами корт</th><td>{{ card_number }}</td></tr>
+      <tr><th>Соҳиби корт</th><td>{{ card_name }}</td></tr>
+      <tr><th>Маблағ</th><td>{{ price }} сомонӣ</td></tr>
+    </table>
+  </div>
+
+  {% if pending %}
+    <div class="card" style="border-color: var(--sun);">
+      <span class="badge badge-warning">Дар интизорӣ</span>
+      <p style="margin-top:10px;">Расиди шумо фиристода шуд ва интизори тасдиқи админ аст. Ин одатан зуд анҷом меёбад.</p>
+    </div>
+  {% elif user.paid %}
+    <div class="card" style="border-color: var(--success);">
+      <span class="badge badge-success">Тасдиқ шудааст</span>
+      <p style="margin-top:10px;">Курси шумо пурра кушода аст. <a href="/lessons">Ба дарсҳо гузаред</a></p>
+    </div>
+  {% else %}
+    {% if latest and latest.status == 'rejected' %}
+      <div class="form-error">Расиди қаблии шумо рад карда шуд{% if latest.note %}: {{ latest.note }}{% endif %}. Лутфан расиди дурустро фиристед.</div>
+    {% endif %}
+    <div class="card">
+      <h3>Фиристодани расид</h3>
+      <form method="post" action="/payment" enctype="multipart/form-data">
+        <div class="field">
+          <label for="receipt">Сурати расид (screenshot)</label>
+          <input type="file" id="receipt" name="receipt" accept="image/*" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Фиристодани расид</button>
+      </form>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

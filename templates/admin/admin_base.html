@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap">
+  <h1 style="margin-top:20px;">Панели админ</h1>
+  <div class="admin-shell">
+    <nav class="admin-nav">
+      <a href="/admin" class="{% if active == 'dashboard' %}active{% endif %}">📊 Умумӣ</a>
+      <a href="/admin/payments" class="{% if active == 'payments' %}active{% endif %}">💳 Пардохтҳо</a>
+      <a href="/admin/dictionary" class="{% if active == 'dictionary' %}active{% endif %}">📚 Луғатҳо</a>
+      <a href="/admin/certificates" class="{% if active == 'certificates' %}active{% endif %}">🏆 Сертификатҳо</a>
+    </nav>
+    <div>
+      {% block admin_content %}{% endblock %}
+    </div>
+  </div>
+</div>
+{% endblock %}

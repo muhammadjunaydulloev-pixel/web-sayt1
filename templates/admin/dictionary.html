@@ -1,0 +1,38 @@
+{% extends "admin/admin_base.html" %}
+{% set active = 'dictionary' %}
+{% block admin_content %}
+<div class="card">
+  <h3>Илова кардани луғати нав</h3>
+  <form method="post" action="/admin/dictionary/add">
+    <div class="field">
+      <label>Рақами дарс</label>
+      <input type="number" name="lesson" min="1" max="26" required>
+    </div>
+    <div class="field">
+      <label>Унвони дарс</label>
+      <input type="text" name="lesson_title" required>
+    </div>
+    <div class="field">
+      <label>Русӣ</label>
+      <input type="text" name="ru" required>
+    </div>
+    <div class="field">
+      <label>Тоҷикӣ</label>
+      <input type="text" name="tj" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Илова кардан</button>
+  </form>
+</div>
+
+<div class="card">
+  <h3>Шумораи луғат дар ҳар дарс</h3>
+  <table>
+    <thead><tr><th>Дарс</th><th>Унвон</th><th>Шумора</th></tr></thead>
+    <tbody>
+      {% for row in counts %}
+      <tr><td>{{ row.lesson }}</td><td>{{ row.lesson_title }}</td><td>{{ row.c }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

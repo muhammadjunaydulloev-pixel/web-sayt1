@@ -1,0 +1,30 @@
+{% extends "admin/admin_base.html" %}
+{% set active = 'dashboard' %}
+{% block admin_content %}
+<div class="stat-cards">
+  <div class="card"><strong>{{ stats.total_users }}</strong><span>корбарон</span></div>
+  <div class="card"><strong>{{ stats.paid_users }}</strong><span>пардохтшуда</span></div>
+  <div class="card"><strong>{{ stats.pending_payments }}</strong><span>расиди интизорӣ</span></div>
+  <div class="card"><strong>{{ stats.total_certificates }}</strong><span>сертификат</span></div>
+  <div class="card"><strong>{{ stats.total_correct }}</strong><span>ҷавоби дуруст</span></div>
+  <div class="card"><strong>{{ stats.total_wrong }}</strong><span>ҷавоби хато</span></div>
+</div>
+
+<div class="card">
+  <h3>20 корбари охирин</h3>
+  <table>
+    <thead><tr><th>Ном</th><th>Телефон</th><th>Пардохт</th><th>Дарсҳо</th><th>Калима</th></tr></thead>
+    <tbody>
+      {% for row in users_with_progress %}
+      <tr>
+        <td>{{ row.user.full_name }}</td>
+        <td>{{ row.user.phone }}</td>
+        <td>{% if row.user.paid %}<span class="badge badge-success">Ҳа</span>{% else %}<span class="badge badge-muted">Не</span>{% endif %}</td>
+        <td>{{ row.summary.lessons_completed }}/{{ total_lessons }}</td>
+        <td>{{ row.summary.words_learned }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

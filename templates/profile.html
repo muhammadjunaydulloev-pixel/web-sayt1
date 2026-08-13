@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Профил — 1300 Луғат{% endblock %}
+{% block content %}
+<div class="wrap-narrow">
+  <h1>{{ user.full_name }}</h1>
+  <p style="color:var(--plum-soft); margin-top:-8px;">{{ user.phone }}</p>
+
+  <div class="stat-cards">
+    <div class="card"><strong>{{ summary.lessons_completed }}/{{ summary.total_lessons }}</strong><span>дарси анҷомёфта</span></div>
+    <div class="card"><strong>{{ summary.words_learned }}</strong><span>калимаи омӯхта</span></div>
+    <div class="card"><strong>{{ summary.percent }}%</strong><span>дурустии тестҳо</span></div>
+  </div>
+
+  <div class="card">
+    <h3>Ҳолати курс</h3>
+    {% if user.paid %}
+      <span class="badge badge-success">Курс кушода аст</span>
+    {% else %}
+      <span class="badge badge-warning">Курс баста аст — танҳо дарси 1 дастрас аст</span>
+      <p style="margin-top:10px;"><a href="/payment" class="btn btn-primary btn-sm">Кушодани курс</a></p>
+    {% endif %}
+    {% if payment and payment.status == 'pending' %}
+      <p style="margin-top:10px; color:var(--plum-soft);">Расиди шумо фиристода шуд, интизори тасдиқи админ.</p>
+    {% elif payment and payment.status == 'rejected' %}
+      <p style="margin-top:10px; color:var(--danger);">Расиди охирини шумо рад карда шуд. <a href="/payment">Аз нав фиристед</a>.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h3>Сертификат</h3>
+    {% if summary.course_completed %}
+      <p>Табрик! Шумо ҳамаи {{ summary.total_lessons }} дарсро анҷом додед.</p>
+      <a href="/certificate/download" class="btn btn-primary">📄 Гирифтани сертификат (PDF)</a>
+    {% else %}
+      <p style="color:var(--plum-soft);">Пас аз анҷоми ҳамаи {{ summary.total_lessons }} дарс, сертификат дар ин ҷо дастрас мешавад.
+      Ҳоло {{ summary.lessons_completed }}/{{ summary.total_lessons }} анҷом ёфтааст.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

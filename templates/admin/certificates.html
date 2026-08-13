@@ -1,0 +1,15 @@
+{% extends "admin/admin_base.html" %}
+{% set active = 'certificates' %}
+{% block admin_content %}
+<div class="card">
+  <h3>30 сертификати охирин</h3>
+  <table>
+    <thead><tr><th>№</th><th>Ном</th><th>Телефон</th><th>Сана</th></tr></thead>
+    <tbody>
+      {% for c in certs %}
+      <tr><td>{{ c.certificate_id }}</td><td>{{ c.full_name }}</td><td>{{ c.phone }}</td><td>{{ c.issued_at[:10] }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

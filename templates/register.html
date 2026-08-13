@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Сабти ном — 1300 Луғат{% endblock %}
+{% block content %}
+<div class="wrap-narrow">
+  <div class="auth-card">
+    <h1>Сабти ном</h1>
+    <p class="auth-sub">Дарси якум пас аз сабти ном ройгон дастрас мешавад.</p>
+    {% if error %}<div class="form-error">{{ error }}</div>{% endif %}
+    <form method="post" action="/register">
+      <div class="field">
+        <label for="full_name">Ному насаб</label>
+        <input type="text" id="full_name" name="full_name" placeholder="Масалан: Аҳмадов Ҷамшед" required>
+      </div>
+      <div class="field">
+        <label for="phone">Рақами телефон</label>
+        <input type="text" id="phone" name="phone" placeholder="+992 90 000 00 00" required>
+      </div>
+      <div class="field">
+        <label for="password">Парол</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <div class="field">
+        <label for="password2">Такрори парол</label>
+        <input type="password" id="password2" name="password2" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Сабти ном кардан</button>
+    </form>
+    <div class="form-note">Аллакай сабт шудаед? <a href="/login">Даромадан</a></div>
+  </div>
+</div>
+{% endblock %}

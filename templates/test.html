@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Тест — Дарси {{ lesson_num }}{% endblock %}
+{% block content %}
+<div class="wrap test-shell" data-lesson="{{ lesson_num }}">
+  <h2 style="text-align:center;">Дарси {{ lesson_num }}: {{ lesson_title }}</h2>
+
+  <div id="test-scoreboard" class="test-scoreboard" style="display:none;">
+    <span class="ok">✓ <span id="score-correct">0</span></span>
+    <span class="bad">✗ <span id="score-wrong">0</span></span>
+  </div>
+
+  <div class="test-progress-bar"><div id="progress-fill" class="test-progress-fill" style="width:0%;"></div></div>
+
+  <div id="test-area">
+    <p style="text-align:center; color:var(--plum-soft);">Тест бор шуда истодааст…</p>
+  </div>
+</div>
+
+<script>
+const lessonNum = {{ lesson_num }};
+let sessionId = null;
+
+function el(html){ const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstChild; }
+
+function renderQuestion(q){
+  sessionId = q.session_id;
+  document.getElementById('test-scoreboard').style.display = 'flex';
+  document.getElementById('score-correct').textContent = q.correct_count;
+  document.getElementById('score-wrong').textContent = q.wrong_count;
+  document.getElementById('progress-fill').style.width = Math.round((q.question_number - 1) / q.total_questions * 100) + '%';
+
+  const area = document.getElementById('test-area');
+  area.innerHTML = '';
+  const card = el(`
+    <div>
+      <div class="test-word-card">
+        <div class="label">Савол ${q.question_number} аз ${q.total_questions} — тарҷума кунед</div>
+        <div class="ru-word">${q.ru}</div>
+      </div>
+      <div class="choice-grid" id="choice-grid"></div>
+      <div class="test-feedback" id="feedback"></div>
+    </div>
+  `);
+  area.appendChild(card);
+  const grid = card.querySelector('#choice-grid');
+  q.choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = c.tj;
+    btn.onclick = () => submitAnswer(c.id, btn);
+    grid.appendChild(btn);
+  });
+}
+
+async function startTest(){
+  const res = await fetch(`/api/test/start/${lessonNum}`, { method: 'POST' });
+  if(!res.ok){
+    document.getElementById('test-area').innerHTML = '<p style="text-align:center;">Хатогӣ рух дод. <a href="/lesson/' + lessonNum + '">Бозгашт</a></p>';
+    return;
+  }
+  const q = await res.json();
+  renderQuestion(q);
+}
+
+async function submitAnswer(choiceId, btnEl){
+  const grid = document.getElementById('choice-grid');
+  Array.from(grid.children).forEach(b => b.disabled = true);
+
+  const form = new FormData();
+  form.append('choice_id', choiceId);
+  const res = await fetch(`/api/test/${sessionId}/answer`, { method: 'POST', body: form });
+  const result = await res.json();
+  if(result.status === 'invalid' || result.status === 'duplicate'){ return; }
+
+  const feedback = document.getElementById('feedback');
+  if(result.status === 'correct'){
+    btnEl.classList.add('correct');
+    feedback.textContent = '✅ Дуруст!';
+    feedback.className = 'test-feedback ok';
+  } else {
+    btnEl.classList.add('wrong');
+    Array.from(grid.children).forEach(b => { if(b.textContent === result.correct_tj) b.classList.add('correct'); });
+    feedback.textContent = `❌ Ҷавоби дуруст: ${result.correct_tj}`;
+    feedback.className = 'test-feedback bad';
+  }
+
+  setTimeout(() => {
+    if(result.finished){
+      showResult(result);
+    } else {
+      renderQuestion(result.next_question);
+    }
+  }, 1100);
+}
+
+function showResult(result){
+  document.getElementById('progress-fill').style.width = '100%';
+  const total = result.final_correct + result.final_wrong;
+  const pct = total ? Math.round(result.final_correct / total * 100) : 0;
+  const area = document.getElementById('test-area');
+  area.innerHTML = `
+    <div class="result-card">
+      <div class="big-emoji">${pct >= 70 ? '🎉' : '💪'}</div>
+      <h2>Дарси ${result.lesson} анҷом ёфт!</h2>
+      <div class="result-stats">
+        <div><strong style="color:var(--success-dark)">${result.final_correct}</strong>дуруст</div>
+        <div><strong style="color:var(--danger)">${result.final_wrong}</strong>хато</div>
+        <div><strong>${pct}%</strong>натиҷа</div>
+      </div>
+      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <a href="/lessons" class="btn btn-primary">Дарси навбатӣ</a>
+        <a href="/lesson/${lessonNum}/test" class="btn btn-ghost">Такрор кардани тест</a>
+      </div>
+    </div>
+  `;
+}
+
+startTest();
+</script>
+{% endblock %}

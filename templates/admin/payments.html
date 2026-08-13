@@ -1,0 +1,28 @@
+{% extends "admin/admin_base.html" %}
+{% set active = 'payments' %}
+{% block admin_content %}
+<div class="card">
+  <h3>Расидҳои интизорӣ ({{ pending|length }})</h3>
+  {% if not pending %}
+    <p style="color:var(--plum-soft);">Ҳоло расиди интизорӣ нест.</p>
+  {% endif %}
+  {% for p in pending %}
+  <div style="border-top:2px solid var(--line); padding:16px 0; display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start;">
+    <img src="/static/{{ p.file_path }}" class="receipt-preview" alt="расид">
+    <div style="flex:1; min-width:200px;">
+      <strong>{{ p.full_name }}</strong><br>
+      <span style="color:var(--plum-soft);">{{ p.phone }}</span><br>
+      <span style="color:var(--plum-soft); font-size:.85rem;">{{ p.created_at[:16] }}</span>
+      <div style="margin-top:10px; display:flex; gap:10px;">
+        <form method="post" action="/admin/payments/{{ p.id }}/approve">
+          <button type="submit" class="btn btn-teal btn-sm">✅ Тасдиқ</button>
+        </form>
+        <form method="post" action="/admin/payments/{{ p.id }}/reject">
+          <button type="submit" class="btn btn-coral btn-sm">❌ Рад</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

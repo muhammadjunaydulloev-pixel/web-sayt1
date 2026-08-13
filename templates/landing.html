@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap">
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">Русӣ → Тоҷикӣ</span>
+        <h1>1300 калимаро дар 26 дарс бо бозӣ омӯзед</h1>
+        <p class="lead">Ҳар дарс — 50 луғат ва як тести кӯтоҳ. Пешрафти шумо нигоҳ дошта мешавад, ҳатто агар имрӯз қатъ карда, фардо идома диҳед. Дар охир — сертификати расмии PDF.</p>
+        <div class="hero-cta">
+          <a href="/register" class="btn btn-primary">Ройгон сар кунед</a>
+          <a href="/login" class="btn btn-ghost">Ман аллакай сабт шудаам</a>
+        </div>
+        <div class="stat-row">
+          <div><strong>{{ total_lessons }}</strong><span>дарс</span></div>
+          <div><strong>1300</strong><span>луғат</span></div>
+          <div><strong>{{ price }} смн</strong><span>як маротиба</span></div>
+        </div>
+      </div>
+      <div class="medallion">
+        <div class="medallion-inner">
+          <strong>1-уми 26</strong>
+          <span>дарси ройгон дастрас аст</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <h2 class="section-title">Мавзӯъҳои дарсҳо</h2>
+  <p class="section-sub">Аз салому алейк то ҳисоботи корӣ — луғатҳо аз ҳаёти ҳаррӯза гирифта шудаанд.</p>
+  <div class="topic-grid">
+    {% for num, title in lesson_titles %}
+    <div class="topic-card">
+      <span class="num">Дарси {{ num }}</span>
+      <span class="title">{{ title }}</span>
+    </div>
+    {% endfor %}
+  </div>
+
+  <h2 class="section-title">Чӣ тавр кор мекунад</h2>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="icon">📖</div>
+      <h3>Дарс ба дарс</h3>
+      <p>Ҳар дарс 50 калимаи русӣ-тоҷикиро дар бар мегирад, гурӯҳбандӣ шуда аз рӯи мавзӯъ.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">✅</div>
+      <h3>Тести интихобӣ</h3>
+      <p>Пас аз ҳар дарс — 10 саволи 4-вариантӣ. Натиҷа ва пешрафт ҳамеша нигоҳ дошта мешавад.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🏆</div>
+      <h3>Сертификат</h3>
+      <p>Пас аз анҷоми ҳамаи 26 дарс, сертификати расмии PDF-и шумо тайёр мешавад.</p>
+    </div>
+  </div>
+
+  <div class="cta-band">
+    <h2>Дарси якум ройгон аст</h2>
+    <p>Бе харҷ санҷед, баъд бо як пардохти хурд тамоми курсро кушоед.</p>
+    <a href="/register" class="btn btn-primary">Ҳозир сабти ном кунед</a>
+  </div>
+</div>
+{% endblock %}

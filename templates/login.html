@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Даромадан — 1300 Луғат{% endblock %}
+{% block content %}
+<div class="wrap-narrow">
+  <div class="auth-card">
+    <h1>Хуш омадед!</h1>
+    <p class="auth-sub">Барои идомаи омӯзиш ворид шавед.</p>
+    {% if error %}<div class="form-error">{{ error }}</div>{% endif %}
+    <form method="post" action="/login">
+      <div class="field">
+        <label for="phone">Рақами телефон</label>
+        <input type="text" id="phone" name="phone" placeholder="+992 90 000 00 00" required autofocus>
+      </div>
+      <div class="field">
+        <label for="password">Парол</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Даромадан</button>
+    </form>
+    <div class="form-note">Ҳанӯз сабти ном накардаед? <a href="/register">Сабти ном кунед</a></div>
+  </div>
+</div>
+{% endblock %}
