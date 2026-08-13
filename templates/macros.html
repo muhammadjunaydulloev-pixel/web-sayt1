@@ -1,0 +1,5 @@
+{% macro avatar(person, size='md') %}
+<span class="avatar avatar-{{ size }}">
+  {% if person.avatar %}{{ person.avatar }}{% else %}<span class="avatar-fallback">{{ (person.full_name or '?')[0]|upper }}</span>{% endif %}
+</span>
+{% endmacro %}

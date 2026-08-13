@@ -25,6 +25,13 @@ COURSE_PRICE = os.getenv("COURSE_PRICE", "89")
 # The first lesson is free so visitors can try the course before paying.
 FREE_LESSON = 1
 
+# Preset avatars users can pick from their profile page — an emoji on a
+# themed background color, no external images or uploads needed.
+AVATARS = [
+    "🦊", "🐼", "🐯", "🐶", "🐱", "🦁", "🐨", "🐵",
+    "🦄", "🐸", "🐧", "🦉", "🐺", "🐰", "🐻", "🦋",
+]
+
 os.makedirs(CERTIFICATES_DIR, exist_ok=True)
 os.makedirs(RECEIPTS_DIR, exist_ok=True)
 os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)

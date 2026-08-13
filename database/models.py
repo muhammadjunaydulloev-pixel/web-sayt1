@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash TEXT NOT NULL,
     is_admin INTEGER NOT NULL DEFAULT 0,
     paid INTEGER NOT NULL DEFAULT 0,
+    avatar TEXT,
     joined_at TEXT NOT NULL
 );
 
@@ -80,4 +81,26 @@ CREATE TABLE IF NOT EXISTS payments (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 CREATE INDEX IF NOT EXISTS idx_payments_user_status ON payments(user_id, status);
+
+-- Group chat: one shared room, visible to every logged-in user and the admin.
+CREATE TABLE IF NOT EXISTS group_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    message TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+CREATE INDEX IF NOT EXISTS idx_group_messages_id ON group_messages(id);
+
+-- Private support chat: one thread per user, shared with every admin.
+CREATE TABLE IF NOT EXISTS admin_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    sender TEXT NOT NULL,
+    message TEXT NOT NULL,
+    is_read INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+CREATE INDEX IF NOT EXISTS idx_admin_messages_user ON admin_messages(user_id, id);
 """

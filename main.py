@@ -8,12 +8,15 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 
 from config import (
-    SECRET_KEY, BASE_DIR, TOTAL_LESSONS, FREE_LESSON,
+    SECRET_KEY, BASE_DIR, TOTAL_LESSONS, FREE_LESSON, AVATARS,
     PAYMENT_CARD_NUMBER, PAYMENT_CARD_NAME, COURSE_PRICE, RECEIPTS_DIR,
 )
 from database.db import init_db
 from deps import templates, get_current_user, require_login, require_admin, RedirectException
-from services import auth_service, lesson_service, test_service, certificate_service, payment_service
+from services import (
+    auth_service, lesson_service, test_service, certificate_service,
+    payment_service, chat_service,
+)
 from routers import admin as admin_router
 
 app = FastAPI(title="1300 Луғат — Русӣ-Тоҷикӣ")
@@ -231,8 +234,16 @@ def profile_page(request: Request):
     payment = payment_service.get_latest_payment(user["id"])
     return templates.TemplateResponse("profile.html", {
         "request": request, "user": user, "summary": summary,
-        "certificate": certificate, "payment": payment,
+        "certificate": certificate, "payment": payment, "avatars": AVATARS,
     })
+
+
+@app.post("/profile/avatar")
+def profile_avatar_update(request: Request, avatar: str = Form(...)):
+    user = require_login(request)
+    if avatar in AVATARS:
+        auth_service.set_avatar(user["id"], avatar)
+    return RedirectResponse("/profile", status_code=303)
 
 
 @app.get("/certificate/download")
@@ -270,3 +281,67 @@ async def payment_submit(request: Request, receipt: UploadFile = File(...)):
         f.write(content)
     payment_service.create_payment_request(user["id"], os.path.join("uploads", "receipts", filename))
     return RedirectResponse("/payment", status_code=303)
+
+
+# ---------- Group chat (everyone, including the admin) ----------
+
+@app.get("/chat")
+def group_chat_page(request: Request):
+    user = require_login(request)
+    return templates.TemplateResponse("chat_group.html", {"request": request, "user": user})
+
+
+@app.get("/api/chat/group/messages")
+def api_group_chat_messages(request: Request, after_id: int = 0):
+    require_login(request)
+    rows = chat_service.get_group_messages(after_id)
+    return JSONResponse({
+        "messages": [
+            {
+                "id": r["id"], "user_id": r["user_id"], "full_name": r["full_name"],
+                "avatar": r["avatar"], "is_admin": bool(r["is_admin"]),
+                "message": r["message"], "created_at": r["created_at"],
+            }
+            for r in rows
+        ]
+    })
+
+
+@app.post("/api/chat/group/send")
+def api_group_chat_send(request: Request, message: str = Form(...)):
+    user = require_login(request)
+    msg_id = chat_service.send_group_message(user["id"], message)
+    if msg_id is None:
+        return JSONResponse({"error": "empty"}, status_code=400)
+    return JSONResponse({"ok": True, "id": msg_id})
+
+
+# ---------- Private chat with the admin (support) ----------
+
+@app.get("/chat/admin")
+def admin_chat_page(request: Request):
+    user = require_login(request)
+    chat_service.mark_read(user["id"], reader="user")
+    return templates.TemplateResponse("chat_admin.html", {"request": request, "user": user})
+
+
+@app.get("/api/chat/admin/messages")
+def api_admin_chat_messages(request: Request, after_id: int = 0):
+    user = require_login(request)
+    chat_service.mark_read(user["id"], reader="user")
+    rows = chat_service.get_admin_messages(user["id"], after_id)
+    return JSONResponse({
+        "messages": [
+            {"id": r["id"], "sender": r["sender"], "message": r["message"], "created_at": r["created_at"]}
+            for r in rows
+        ]
+    })
+
+
+@app.post("/api/chat/admin/send")
+def api_admin_chat_send(request: Request, message: str = Form(...)):
+    user = require_login(request)
+    msg_id = chat_service.send_admin_message(user["id"], "user", message)
+    if msg_id is None:
+        return JSONResponse({"error": "empty"}, status_code=400)
+    return JSONResponse({"ok": True, "id": msg_id})

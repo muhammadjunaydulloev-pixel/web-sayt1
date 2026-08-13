@@ -45,7 +45,18 @@ def init_db():
     conn = get_conn()
     conn.executescript(CREATE_TABLES_SQL)
     conn.commit()
+    _migrate()
     _seed_words()
+
+
+def _migrate():
+    """Add columns that didn't exist in earlier versions of the schema,
+    so an existing app.db from before this update keeps working."""
+    conn = get_conn()
+    cols = [row["name"] for row in conn.execute("PRAGMA table_info(users)").fetchall()]
+    if "avatar" not in cols:
+        conn.execute("ALTER TABLE users ADD COLUMN avatar TEXT")
+        conn.commit()
 
 
 def _seed_words():

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Чати гурӯҳӣ — 1300 Луғат{% endblock %}
+{% block content %}
+<div class="wrap-narrow">
+  <h1>Чати гурӯҳӣ</h1>
+  <p style="color:var(--plum-soft); margin-top:-8px;">Дар ин ҷо ҳамаи корбарон ва админ якҷоя чат мекунанд.</p>
+
+  <div class="chat-shell">
+    <div id="chat-messages" class="chat-messages">
+      <p class="chat-empty">Паём нест. Аввалин шуда нависед!</p>
+    </div>
+    <form id="chat-form" class="chat-form">
+      <input type="text" id="chat-input" name="message" placeholder="Паёмро нависед…" maxlength="2000" autocomplete="off" required>
+      <button type="submit" class="btn btn-primary btn-sm">Фиристодан</button>
+    </form>
+  </div>
+</div>
+
+<script>
+const myUserId = {{ user.id }};
+let lastId = 0;
+const box = document.getElementById('chat-messages');
+let firstLoad = true;
+
+function esc(s){
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function renderMessage(m){
+  const mine = m.user_id === myUserId;
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-msg' + (mine ? ' mine' : '') + (m.is_admin ? ' admin-msg' : '');
+  const nameLabel = (m.is_admin ? '👑 Админ · ' : '') + esc(m.full_name);
+  wrap.innerHTML = `
+    <span class="avatar avatar-sm">${m.avatar ? m.avatar : '<span class="avatar-fallback">' + esc(m.full_name[0].toUpperCase()) + '</span>'}</span>
+    <div class="bubble">
+      <div class="meta">${nameLabel}</div>
+      <div class="text">${esc(m.message)}</div>
+    </div>
+  `;
+  box.appendChild(wrap);
+}
+
+async function poll(){
+  try{
+    const res = await fetch('/api/chat/group/messages?after_id=' + lastId);
+    const data = await res.json();
+    if(data.messages.length){
+      if(firstLoad) box.innerHTML = '';
+      data.messages.forEach(m => { renderMessage(m); lastId = m.id; });
+      firstLoad = false;
+      box.scrollTop = box.scrollHeight;
+    }
+  }catch(e){ /* network hiccup, will retry */ }
+}
+
+document.getElementById('chat-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  const form = new FormData();
+  form.append('message', text);
+  await fetch('/api/chat/group/send', { method: 'POST', body: form });
+  await poll();
+});
+
+poll();
+setInterval(poll, 3000);
+</script>
+{% endblock %}

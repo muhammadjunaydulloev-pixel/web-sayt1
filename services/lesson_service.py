@@ -65,6 +65,24 @@ def mark_lesson_completed(user_id: int, lesson: int, correct: int, wrong: int):
     )
 
 
+def get_lesson_progress_detail(user_id: int):
+    """Per-lesson breakdown (title, completed, correct/wrong) for a single user —
+    used on the admin user-detail page."""
+    titles = get_lesson_titles()
+    progress_map = get_lesson_progress_map(user_id)
+    detail = []
+    for lesson_num, title in titles:
+        p = progress_map.get(lesson_num)
+        detail.append({
+            "number": lesson_num,
+            "title": title,
+            "completed": bool(p and p["completed"]),
+            "correct": p["correct_count"] if p else 0,
+            "wrong": p["wrong_count"] if p else 0,
+        })
+    return detail
+
+
 def get_progress_summary(user_id: int):
     completed_lessons = len(get_completed_lessons(user_id))
 

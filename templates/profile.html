@@ -1,9 +1,27 @@
 {% extends "base.html" %}
+{% from "macros.html" import avatar %}
 {% block title %}Профил — 1300 Луғат{% endblock %}
 {% block content %}
 <div class="wrap-narrow">
-  <h1>{{ user.full_name }}</h1>
-  <p style="color:var(--plum-soft); margin-top:-8px;">{{ user.phone }}</p>
+  <div class="profile-head">
+    {{ avatar(user, 'lg') }}
+    <div>
+      <h1 style="margin-bottom:2px;">{{ user.full_name }}</h1>
+      <p style="color:var(--plum-soft); margin:0;">{{ user.phone }}</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Аватар</h3>
+    <p style="color:var(--plum-soft); margin-top:-4px;">Симои худро аз галерея интихоб кунед.</p>
+    <form method="post" action="/profile/avatar">
+      <div class="avatar-picker">
+        {% for a in avatars %}
+        <button type="submit" name="avatar" value="{{ a }}" class="{% if user.avatar == a %}selected{% endif %}">{{ a }}</button>
+        {% endfor %}
+      </div>
+    </form>
+  </div>
 
   <div class="stat-cards">
     <div class="card"><strong>{{ summary.lessons_completed }}/{{ summary.total_lessons }}</strong><span>дарси анҷомёфта</span></div>

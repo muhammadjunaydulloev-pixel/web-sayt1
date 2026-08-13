@@ -1,0 +1,86 @@
+{% extends "admin/admin_base.html" %}
+{% from "macros.html" import avatar %}
+{% set active = 'users' %}
+{% block admin_content %}
+<a href="/admin/users" class="back-link">← Ба рӯйхати корбарон</a>
+
+<div class="card">
+  <div class="profile-head">
+    {{ avatar(user, 'lg') }}
+    <div>
+      <h2 style="margin-bottom:2px;">{{ user.full_name }}</h2>
+      <p style="color:var(--plum-soft); margin:0;">{{ user.phone }} · аз {{ user.joined_at[:10] }}</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; align-items:center;">
+    {% if user.paid %}<span class="badge badge-success">Курс пардохта шудааст</span>
+    {% else %}<span class="badge badge-muted">Курс пардохта нашудааст</span>{% endif %}
+    <form method="post" action="/admin/users/{{ user.id }}/toggle-paid">
+      <button type="submit" class="btn btn-ghost btn-sm">
+        {% if user.paid %}Бастани дастрасӣ{% else %}Кушодани дастрасӣ (дастӣ){% endif %}
+      </button>
+    </form>
+    <a href="/admin/chat?user={{ user.id }}" class="btn btn-teal btn-sm">💬 Чат бо ин корбар</a>
+  </div>
+</div>
+
+<div class="stat-cards">
+  <div class="card"><strong>{{ summary.lessons_completed }}/{{ summary.total_lessons }}</strong><span>дарси анҷомёфта</span></div>
+  <div class="card"><strong>{{ summary.words_learned }}</strong><span>калимаи омӯхта</span></div>
+  <div class="card"><strong>{{ summary.percent }}%</strong><span>дурустии тестҳо</span></div>
+  <div class="card"><strong>{{ summary.correct }}</strong><span>ҷавоби дуруст</span></div>
+  <div class="card"><strong>{{ summary.wrong }}</strong><span>ҷавоби хато</span></div>
+</div>
+
+<div class="card">
+  <h3>Сертификат</h3>
+  {% if certificate %}
+    <p>№ {{ certificate.certificate_id }} · содиршуда {{ certificate.issued_at[:10] }}</p>
+    <a href="/certificate/download" class="btn btn-primary btn-sm" style="pointer-events:none; opacity:.5;" title="Танҳо худи корбар метавонад боргирӣ кунад">📄 PDF (танҳо назди корбар дастрас аст)</a>
+  {% else %}
+    <p style="color:var(--plum-soft);">Ин корбар ҳанӯз сертификат нагирифтааст.</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h3>Таърихи пардохтҳо</h3>
+  {% if payments %}
+  <table>
+    <thead><tr><th>Сана</th><th>Ҳолат</th><th>Расид</th></tr></thead>
+    <tbody>
+      {% for p in payments %}
+      <tr>
+        <td>{{ p.created_at[:16].replace('T',' ') }}</td>
+        <td>
+          {% if p.status == 'approved' %}<span class="badge badge-success">Тасдиқшуда</span>
+          {% elif p.status == 'rejected' %}<span class="badge badge-danger">Радшуда</span>
+          {% else %}<span class="badge badge-warning">Интизорӣ</span>{% endif %}
+        </td>
+        <td><a href="/static/{{ p.file_path }}" target="_blank">Дидани расид</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color:var(--plum-soft);">Пардохт сабт нашудааст.</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h3>Пешрафти дарсҳо</h3>
+  <table>
+    <thead><tr><th>№</th><th>Дарс</th><th>Ҳолат</th><th>Дуруст</th><th>Хато</th></tr></thead>
+    <tbody>
+      {% for l in lesson_detail %}
+      <tr>
+        <td>{{ l.number }}</td>
+        <td>{{ l.title }}</td>
+        <td>{% if l.completed %}<span class="badge badge-success">Анҷом</span>{% else %}<span class="badge badge-muted">Не</span>{% endif %}</td>
+        <td>{{ l.correct }}</td>
+        <td>{{ l.wrong }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

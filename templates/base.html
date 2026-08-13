@@ -14,9 +14,25 @@
       1300 Луғат
     </a>
     <nav class="nav-links">
-      {% if request.session.get('user_id') %}
-        <a href="/lessons">Дарсҳо</a>
-        <a href="/profile">Профил</a>
+      {% set nu = nav_user(request) %}
+      {% if nu %}
+        {% if nu.is_admin %}
+          <a href="/admin">Панели админ</a>
+          <a href="/admin/chat">
+            Чат
+            {% set au = nav_admin_chat_unread(request) %}
+            {% if au %}<span class="nav-badge">{{ au }}</span>{% endif %}
+          </a>
+        {% else %}
+          <a href="/lessons">Дарсҳо</a>
+          <a href="/profile">Профил</a>
+          <a href="/chat">Чати гурӯҳӣ</a>
+          <a href="/chat/admin">
+            Чат бо админ
+            {% set uu = nav_chat_unread(request) %}
+            {% if uu %}<span class="nav-badge">{{ uu }}</span>{% endif %}
+          </a>
+        {% endif %}
         <a href="/logout">Баромадан</a>
       {% else %}
         <a href="/login">Даромадан</a>

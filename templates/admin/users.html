@@ -1,0 +1,33 @@
+{% extends "admin/admin_base.html" %}
+{% from "macros.html" import avatar %}
+{% set active = 'users' %}
+{% block admin_content %}
+<div class="card">
+  <div class="table-toolbar">
+    <form method="get" action="/admin/users" style="display:flex; gap:10px; flex:1;">
+      <input type="text" name="q" value="{{ q }}" placeholder="Ҷустуҷӯ бо ном ё телефон…">
+      <button type="submit" class="btn btn-teal btn-sm">Ҷустуҷӯ</button>
+      {% if q %}<a href="/admin/users" class="btn btn-ghost btn-sm">Тоза</a>{% endif %}
+    </form>
+  </div>
+
+  <table>
+    <thead><tr><th></th><th>Ном</th><th>Телефон</th><th>Пардохт</th><th>Дарсҳо</th><th>Калима</th><th>Дурустӣ</th></tr></thead>
+    <tbody>
+      {% for row in users_with_progress %}
+      <tr onclick="location.href='/admin/users/{{ row.user.id }}'" style="cursor:pointer;">
+        <td>{{ avatar(row.user, 'sm') }}</td>
+        <td>{{ row.user.full_name }}</td>
+        <td>{{ row.user.phone }}</td>
+        <td>{% if row.user.paid %}<span class="badge badge-success">Ҳа</span>{% else %}<span class="badge badge-muted">Не</span>{% endif %}</td>
+        <td>{{ row.summary.lessons_completed }}/{{ total_lessons }}</td>
+        <td>{{ row.summary.words_learned }}</td>
+        <td>{{ row.summary.percent }}%</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" style="text-align:center; color:var(--plum-soft);">Корбар ёфт нашуд.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

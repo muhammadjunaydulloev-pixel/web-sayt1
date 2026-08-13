@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from fastapi import APIRouter, Request, Form
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, JSONResponse
 
 from deps import templates, require_admin
 from database.db import query_all, query_one, execute
-from services import payment_service, certificate_service, lesson_service
+from services import payment_service, certificate_service, lesson_service, auth_service, chat_service
 from config import TOTAL_LESSONS, TOTAL_WORDS
 
 router = APIRouter(prefix="/admin")
@@ -102,3 +102,79 @@ def admin_certificates(request: Request):
     return templates.TemplateResponse("admin/certificates.html", {
         "request": request, "admin": admin, "certs": certs,
     })
+
+
+# ---------- Users ----------
+
+@router.get("/users")
+def admin_users(request: Request, q: str = ""):
+    admin = require_admin(request)
+    users = auth_service.list_all_users(q)
+    users_with_progress = [
+        {"user": u, "summary": lesson_service.get_progress_summary(u["id"])} for u in users
+    ]
+    return templates.TemplateResponse("admin/users.html", {
+        "request": request, "admin": admin, "users_with_progress": users_with_progress,
+        "total_lessons": TOTAL_LESSONS, "q": q,
+    })
+
+
+@router.get("/users/{user_id}")
+def admin_user_detail(request: Request, user_id: int):
+    admin = require_admin(request)
+    user = auth_service.get_user_by_id(user_id)
+    if user is None or user["is_admin"]:
+        return RedirectResponse("/admin/users", status_code=303)
+    summary = lesson_service.get_progress_summary(user_id)
+    lesson_detail = lesson_service.get_lesson_progress_detail(user_id)
+    certificate = certificate_service.get_existing_certificate(user_id)
+    payments = payment_service.list_payments_for_user(user_id)
+    return templates.TemplateResponse("admin/user_detail.html", {
+        "request": request, "admin": admin, "user": user, "summary": summary,
+        "lesson_detail": lesson_detail, "certificate": certificate, "payments": payments,
+    })
+
+
+@router.post("/users/{user_id}/toggle-paid")
+def admin_user_toggle_paid(request: Request, user_id: int):
+    require_admin(request)
+    user = auth_service.get_user_by_id(user_id)
+    if user and not user["is_admin"]:
+        execute("UPDATE users SET paid = ? WHERE id = ?", (0 if user["paid"] else 1, user_id))
+    return RedirectResponse(f"/admin/users/{user_id}", status_code=303)
+
+
+# ---------- Admin ↔ user chat ----------
+
+@router.get("/chat")
+def admin_chat_page(request: Request, user: int = 0):
+    admin = require_admin(request)
+    conversations = chat_service.list_conversations()
+    selected_id = user or (conversations[0]["user_id"] if conversations else None)
+    if selected_id:
+        chat_service.mark_read(selected_id, reader="admin")
+    selected_user = auth_service.get_user_by_id(selected_id) if selected_id else None
+    return templates.TemplateResponse("admin/chat.html", {
+        "request": request, "admin": admin, "conversations": conversations,
+        "selected_id": selected_id, "selected_user": selected_user,
+    })
+
+
+@router.get("/chat/{user_id}/messages")
+def admin_api_chat_messages(request: Request, user_id: int, after_id: int = 0):
+    require_admin(request)
+    chat_service.mark_read(user_id, reader="admin")
+    rows = chat_service.get_admin_messages(user_id, after_id)
+    return JSONResponse({
+        "messages": [
+            {"id": r["id"], "sender": r["sender"], "message": r["message"], "created_at": r["created_at"]}
+            for r in rows
+        ]
+    })
+
+
+@router.post("/chat/{user_id}/send")
+def admin_chat_send(request: Request, user_id: int, message: str = Form(...)):
+    require_admin(request)
+    chat_service.send_admin_message(user_id, "admin", message)
+    return JSONResponse({"ok": True})

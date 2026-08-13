@@ -1,0 +1,99 @@
+{% extends "admin/admin_base.html" %}
+{% from "macros.html" import avatar %}
+{% set active = 'chat' %}
+{% block admin_content %}
+<div class="admin-chat-shell">
+  <div class="conv-list">
+    {% for c in conversations %}
+    <div class="conv-item {% if c.user_id == selected_id %}active{% endif %}" onclick="location.href='/admin/chat?user={{ c.user_id }}'">
+      {{ avatar(c, 'sm') }}
+      <div style="min-width:0;">
+        <div class="name">{{ c.full_name }}</div>
+        <div class="preview">{{ c.last_message }}</div>
+      </div>
+      {% if c.unread %}<span class="unread">{{ c.unread }}</span>{% endif %}
+    </div>
+    {% else %}
+    <p style="padding:14px; color:var(--plum-soft); font-weight:700;">Ягон корбар ҳанӯз чат накардааст.</p>
+    {% endfor %}
+  </div>
+
+  {% if selected_user %}
+  <div class="chat-shell" style="height:100%;">
+    <div style="padding:14px 18px; border-bottom:2px solid var(--line); display:flex; align-items:center; gap:10px;">
+      {{ avatar(selected_user, 'sm') }}
+      <div>
+        <strong>{{ selected_user.full_name }}</strong>
+        <div style="font-size:.78rem; color:var(--plum-soft);">{{ selected_user.phone }}</div>
+      </div>
+    </div>
+    <div id="chat-messages" class="chat-messages">
+      <p class="chat-empty">Паём нест.</p>
+    </div>
+    <form id="chat-form" class="chat-form">
+      <input type="text" id="chat-input" name="message" placeholder="Ҷавоб нависед…" maxlength="2000" autocomplete="off" required>
+      <button type="submit" class="btn btn-primary btn-sm">Фиристодан</button>
+    </form>
+  </div>
+  {% else %}
+  <div class="admin-chat-empty">Корбарро аз рӯйхат интихоб кунед</div>
+  {% endif %}
+</div>
+
+{% if selected_user %}
+<script>
+const targetUserId = {{ selected_id }};
+let lastId = 0;
+const box = document.getElementById('chat-messages');
+let firstLoad = true;
+
+function esc(s){
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function renderMessage(m){
+  const mine = m.sender === 'admin';
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-msg' + (mine ? ' mine' : ' admin-msg');
+  const nameLabel = mine ? 'Шумо (Админ)' : '{{ selected_user.full_name }}';
+  wrap.innerHTML = `
+    <div class="bubble">
+      <div class="meta">${nameLabel}</div>
+      <div class="text">${esc(m.message)}</div>
+    </div>
+  `;
+  box.appendChild(wrap);
+}
+
+async function poll(){
+  try{
+    const res = await fetch(`/admin/chat/${targetUserId}/messages?after_id=` + lastId);
+    const data = await res.json();
+    if(data.messages.length){
+      if(firstLoad) box.innerHTML = '';
+      data.messages.forEach(m => { renderMessage(m); lastId = m.id; });
+      firstLoad = false;
+      box.scrollTop = box.scrollHeight;
+    }
+  }catch(e){ /* network hiccup, will retry */ }
+}
+
+document.getElementById('chat-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  const form = new FormData();
+  form.append('message', text);
+  await fetch(`/admin/chat/${targetUserId}/send`, { method: 'POST', body: form });
+  await poll();
+});
+
+poll();
+setInterval(poll, 3000);
+</script>
+{% endif %}
+{% endblock %}

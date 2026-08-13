@@ -4,7 +4,7 @@ import hmac
 import os
 from datetime import datetime, timezone
 
-from database.db import execute, query_one
+from database.db import execute, query_one, query_all
 
 
 def _now():
@@ -51,3 +51,20 @@ def authenticate(phone: str, password: str):
     if not verify_password(password, user["password_hash"]):
         return None
     return user
+
+
+def list_all_users(search: str = ""):
+    """All non-admin users, newest first. Optional search by name or phone."""
+    search = (search or "").strip()
+    if search:
+        like = f"%{search}%"
+        return query_all(
+            "SELECT * FROM users WHERE is_admin = 0 AND (full_name LIKE ? OR phone LIKE ?) "
+            "ORDER BY id DESC",
+            (like, like),
+        )
+    return query_all("SELECT * FROM users WHERE is_admin = 0 ORDER BY id DESC")
+
+
+def set_avatar(user_id: int, avatar: str):
+    execute("UPDATE users SET avatar = ? WHERE id = ?", (avatar, user_id))

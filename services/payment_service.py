@@ -34,6 +34,12 @@ def create_payment_request(user_id: int, file_path: str) -> int:
     return cur.lastrowid
 
 
+def list_payments_for_user(user_id: int):
+    return query_all(
+        "SELECT * FROM payments WHERE user_id = ? ORDER BY id DESC", (user_id,)
+    )
+
+
 def get_payment(payment_id: int):
     return query_one("SELECT * FROM payments WHERE id = ?", (payment_id,))
 
