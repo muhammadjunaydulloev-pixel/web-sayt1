@@ -283,10 +283,24 @@ footer{ padding: 30px 0; text-align:center; color: var(--plum-soft); font-size:.
 .word-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap:12px; margin: 24px 0 34px; }
 .word-card{
   background:#fff; border-radius: var(--radius-md); padding:14px 16px; border:2px solid var(--line);
-  display:flex; flex-direction:column; gap:2px;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
 }
+.word-card .txt{ display:flex; flex-direction:column; gap:2px; min-width:0; }
 .word-card .ru{ font-weight:800; color:var(--plum); }
 .word-card .tj{ color: var(--teal-dark); font-weight:700; }
+.word-speak-btn{
+  flex:0 0 auto; width:36px; height:36px; border-radius:50%;
+  border:2px solid var(--line); background:#fff; color:var(--teal-dark);
+  font-size:1rem; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition: transform .12s, border-color .12s, background .12s;
+}
+.word-speak-btn:hover{ border-color: var(--teal); }
+.word-speak-btn:active{ transform: scale(.9); }
+.word-speak-btn.speaking{ background: var(--teal); border-color: var(--teal); color:#fff; animation: fx-pulse .5s ease-in-out infinite; }
+@keyframes fx-pulse{
+  0%,100%{ transform: scale(1); }
+  50%{ transform: scale(1.12); }
+}
 
 /* ---------- Test screen ---------- */
 .test-shell{ max-width: 560px; margin: 20px auto; }
@@ -299,7 +313,8 @@ footer{ padding: 30px 0; text-align:center; color: var(--plum-soft); font-size:.
   box-shadow: var(--shadow-md); margin-bottom: 26px; border:2px solid var(--line);
 }
 .test-word-card .label{ font-size:.8rem; font-weight:800; color:var(--plum-soft); text-transform:uppercase; letter-spacing:.06em; }
-.test-word-card .ru-word{ font-family:var(--font-display); font-size:2.4rem; color:var(--plum); margin-top:8px; }
+.test-word-card .ru-word-row{ display:flex; align-items:center; justify-content:center; gap:10px; margin-top:8px; }
+.test-word-card .ru-word{ font-family:var(--font-display); font-size:2.4rem; color:var(--plum); }
 .choice-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
 .choice-btn{
   background:#fff; border:2px solid var(--line); border-radius: var(--radius-md);
@@ -577,4 +592,45 @@ th{ font-family: var(--font-display); color: var(--plum-soft); font-size:.78rem;
   margin-left:auto; background: var(--coral); color:#fff; font-size:.75rem; font-weight:800;
   border-radius:999px; min-width:22px; height:22px; padding:0 6px;
   display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+
+/* ---------- FX: садо ва аломатҳои визуалӣ барои тест ---------- */
+.fx-confetti-layer{
+  position: fixed; inset: 0; pointer-events: none; z-index: 9999; overflow: hidden;
+}
+.fx-confetti-piece{
+  position: fixed; font-size: 1.4rem; opacity: 1;
+  animation: fx-confetti-fly .95s cubic-bezier(.2,.7,.3,1) forwards;
+  transform: translate(-50%, -50%);
+}
+@keyframes fx-confetti-fly{
+  0%{ transform: translate(-50%,-50%) translate(0,0) rotate(0deg) scale(.6); opacity:1; }
+  70%{ opacity:1; }
+  100%{
+    transform: translate(-50%,-50%) translate(var(--dx), calc(var(--dy) + 140px)) rotate(var(--rot)) scale(1);
+    opacity:0;
+  }
+}
+
+.fx-flash-correct, .fx-flash-wrong{
+  position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+  animation: fx-flash-fade .45s ease-out forwards;
+}
+.fx-flash-correct{ background: radial-gradient(circle at 50% 40%, rgba(63,184,138,.28), rgba(63,184,138,0) 65%); }
+.fx-flash-wrong{ background: radial-gradient(circle at 50% 40%, rgba(225,79,79,.24), rgba(225,79,79,0) 65%); }
+@keyframes fx-flash-fade{
+  0%{ opacity:1; }
+  100%{ opacity:0; }
+}
+
+.fx-shake{ animation: fx-shake-kf .42s cubic-bezier(.36,.07,.19,.97); }
+@keyframes fx-shake-kf{
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
+  40%, 60% { transform: translate3d(5px, 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .fx-confetti-piece, .fx-flash-correct, .fx-flash-wrong, .fx-shake{ animation: none !important; }
 }

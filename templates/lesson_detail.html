@@ -12,12 +12,22 @@
   <div class="word-grid">
     {% for w in words %}
     <div class="word-card">
-      <span class="ru">{{ w.ru }}</span>
-      <span class="tj">{{ w.tj }}</span>
+      <div class="txt">
+        <span class="ru">{{ w.ru }}</span>
+        <span class="tj">{{ w.tj }}</span>
+      </div>
+      <button type="button" class="word-speak-btn speak-word-btn" data-ru="{{ w.ru }}" title="Гӯш кардани талаффуз" aria-label="Гӯш кардани талаффуз">🔊</button>
     </div>
     {% endfor %}
   </div>
 
   <a href="/lesson/{{ lesson_num }}/test" class="btn btn-primary btn-block">▶️ {% if completed %}Такрор кардани тест{% else %}Оғоз кардани тест{% endif %}</a>
 </div>
+<script>
+document.querySelectorAll('.speak-word-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    SlFx.speakRu(btn.dataset.ru, btn);
+  });
+});
+</script>
 {% endblock %}

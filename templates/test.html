@@ -35,13 +35,18 @@ function renderQuestion(q){
     <div>
       <div class="test-word-card">
         <div class="label">Савол ${q.question_number} аз ${q.total_questions} — тарҷума кунед</div>
-        <div class="ru-word">${q.ru}</div>
+        <div class="ru-word-row">
+          <div class="ru-word">${q.ru}</div>
+          <button type="button" class="word-speak-btn" id="test-speak-btn" title="Гӯш кардани талаффуз" aria-label="Гӯш кардани талаффуз">🔊</button>
+        </div>
       </div>
       <div class="choice-grid" id="choice-grid"></div>
       <div class="test-feedback" id="feedback"></div>
     </div>
   `);
   area.appendChild(card);
+  const speakBtn = card.querySelector('#test-speak-btn');
+  speakBtn.onclick = () => SlFx.speakRu(q.ru, speakBtn);
   const grid = card.querySelector('#choice-grid');
   q.choices.forEach(c => {
     const btn = document.createElement('button');
@@ -77,11 +82,13 @@ async function submitAnswer(choiceId, btnEl){
     btnEl.classList.add('correct');
     feedback.textContent = '✅ Дуруст!';
     feedback.className = 'test-feedback ok';
+    if(window.SlFx) SlFx.celebrateCorrect(btnEl);
   } else {
     btnEl.classList.add('wrong');
     Array.from(grid.children).forEach(b => { if(b.textContent === result.correct_tj) b.classList.add('correct'); });
     feedback.textContent = `❌ Ҷавоби дуруст: ${result.correct_tj}`;
     feedback.className = 'test-feedback bad';
+    if(window.SlFx) SlFx.signalWrong(document.querySelector('.test-shell'));
   }
 
   setTimeout(() => {
@@ -97,6 +104,7 @@ function showResult(result){
   document.getElementById('progress-fill').style.width = '100%';
   const total = result.final_correct + result.final_wrong;
   const pct = total ? Math.round(result.final_correct / total * 100) : 0;
+  if(window.SlFx) SlFx.playFinishSound(pct >= 70);
   const area = document.getElementById('test-area');
   area.innerHTML = `
     <div class="result-card">
