@@ -283,9 +283,42 @@ async def payment_submit(request: Request, receipt: UploadFile = File(...)):
     return RedirectResponse("/payment", status_code=303)
 
 
-# ---------- Group chat (everyone, including the admin) ----------
+# ---------- Chat list (WhatsApp-style picker: group or admin support) ----------
 
 @app.get("/chat")
+def chat_list_page(request: Request):
+    user = require_login(request)
+    if user["is_admin"]:
+        return RedirectResponse("/admin/chat", status_code=303)
+
+    last_group = chat_service.get_last_group_message()
+    last_admin = chat_service.get_last_admin_message(user["id"])
+    unread_admin = chat_service.get_unread_count_for_user(user["id"])
+
+    group_preview = None
+    if last_group:
+        prefix = "Шумо: " if last_group["user_id"] == user["id"] else (
+            "👑 Админ: " if last_group["is_admin"] else last_group["full_name"] + ": "
+        )
+        group_preview = prefix + last_group["message"]
+
+    admin_preview = None
+    if last_admin:
+        admin_preview = ("Шумо: " if last_admin["sender"] == "user" else "Админ: ") + last_admin["message"]
+
+    return templates.TemplateResponse("chat_list.html", {
+        "request": request, "user": user,
+        "group_preview": group_preview,
+        "group_at": last_group["created_at"] if last_group else None,
+        "admin_preview": admin_preview,
+        "admin_at": last_admin["created_at"] if last_admin else None,
+        "unread_admin": unread_admin,
+    })
+
+
+# ---------- Group chat (everyone, including the admin) ----------
+
+@app.get("/chat/group")
 def group_chat_page(request: Request):
     user = require_login(request)
     return templates.TemplateResponse("chat_group.html", {"request": request, "user": user})

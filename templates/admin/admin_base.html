@@ -14,7 +14,7 @@
         {% set au = nav_admin_chat_unread(request) %}
         {% if au %}<span class="nav-badge">{{ au }}</span>{% endif %}
       </a>
-      <a href="/chat" class="{% if active == 'group' %}active{% endif %}">🌐 Чати гурӯҳӣ</a>
+      <a href="/chat/group" class="{% if active == 'group' %}active{% endif %}">🌐 Чати гурӯҳӣ</a>
     </nav>
     <div>
       {% block admin_content %}{% endblock %}

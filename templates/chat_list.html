@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Чат — 1300 Луғат{% endblock %}
+{% block content %}
+<div class="wrap-narrow">
+  <h1>Чат</h1>
+  <p style="color:var(--plum-soft); margin-top:-8px;">Интихоб кунед: чати гурӯҳӣ ё чат бо админ.</p>
+
+  <div class="chatlist">
+    <a href="/chat/group" class="chatlist-item">
+      <span class="chatlist-icon chatlist-icon-group">👥</span>
+      <div class="chatlist-body">
+        <div class="chatlist-top">
+          <span class="chatlist-name">Гурӯҳи умумӣ</span>
+          {% if group_at %}<span class="chatlist-time" data-iso="{{ group_at }}"></span>{% endif %}
+        </div>
+        <div class="chatlist-preview">{{ group_preview or "Ҳанӯз паём нест. Аввалин шуда нависед!" }}</div>
+      </div>
+    </a>
+
+    <a href="/chat/admin" class="chatlist-item">
+      <span class="chatlist-icon chatlist-icon-admin">🎧</span>
+      <div class="chatlist-body">
+        <div class="chatlist-top">
+          <span class="chatlist-name">Дастгирӣ (Админ)</span>
+          {% if admin_at %}<span class="chatlist-time" data-iso="{{ admin_at }}"></span>{% endif %}
+        </div>
+        <div class="chatlist-preview">{{ admin_preview or "Саволе доред? Ба админ нависед." }}</div>
+      </div>
+      {% if unread_admin %}<span class="chatlist-badge">{{ unread_admin }}</span>{% endif %}
+    </a>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.chatlist-time').forEach(el => {
+  const d = new Date(el.dataset.iso + (el.dataset.iso.endsWith('Z') ? '' : 'Z'));
+  if (isNaN(d)) return;
+  const now = new Date();
+  const sameDay = d.toDateString() === now.toDateString();
+  el.textContent = sameDay
+    ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    : d.toLocaleDateString([], { day: '2-digit', month: '2-digit' });
+});
+</script>
+{% endblock %}

@@ -26,9 +26,8 @@
         {% else %}
           <a href="/lessons">Дарсҳо</a>
           <a href="/profile">Профил</a>
-          <a href="/chat">Чати гурӯҳӣ</a>
-          <a href="/chat/admin">
-            Чат бо админ
+          <a href="/chat">
+            Чат
             {% set uu = nav_chat_unread(request) %}
             {% if uu %}<span class="nav-badge">{{ uu }}</span>{% endif %}
           </a>
@@ -70,11 +69,8 @@
     <a href="/profile" class="tabbar-item {% if request.url.path.startswith('/profile') %}active{% endif %}">
       <span class="tabbar-icon">👤</span><span>Профил</span>
     </a>
-    <a href="/chat" class="tabbar-item {% if request.url.path == '/chat' %}active{% endif %}">
-      <span class="tabbar-icon">👥</span><span>Гурӯҳӣ</span>
-    </a>
-    <a href="/chat/admin" class="tabbar-item {% if request.url.path.startswith('/chat/admin') %}active{% endif %}">
-      <span class="tabbar-icon">🎧</span><span>Админ</span>
+    <a href="/chat" class="tabbar-item {% if request.url.path.startswith('/chat') %}active{% endif %}">
+      <span class="tabbar-icon">💬</span><span>Чат</span>
       {% set uu = nav_chat_unread(request) %}
       {% if uu %}<span class="tabbar-badge">{{ uu }}</span>{% endif %}
     </a>

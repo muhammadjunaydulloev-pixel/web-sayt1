@@ -495,3 +495,36 @@ th{ font-family: var(--font-display); color: var(--plum-soft); font-size:.78rem;
   .admin-chat-shell{ grid-template-columns: 1fr; height:auto; }
   .conv-list{ max-height:220px; }
 }
+
+/* ---------- User-facing chat list (WhatsApp-style picker) ---------- */
+.chatlist{
+  display:flex; flex-direction:column; gap:10px; margin-top:18px;
+}
+.chatlist-item{
+  display:flex; align-items:center; gap:14px; background:#fff;
+  border:2px solid var(--line); border-radius: var(--radius-lg);
+  padding:14px 16px; text-decoration:none; color:inherit;
+  box-shadow: var(--shadow-sm); transition: background .15s, transform .1s;
+}
+.chatlist-item:hover{ background: var(--cream-2); }
+.chatlist-item:active{ transform: scale(.99); }
+.chatlist-icon{
+  flex-shrink:0; width:52px; height:52px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.5rem; color:#fff;
+}
+.chatlist-icon-group{ background: linear-gradient(135deg, var(--teal), var(--teal-dark)); }
+.chatlist-icon-admin{ background: linear-gradient(135deg, var(--sun), var(--sun-dark)); }
+.chatlist-body{ min-width:0; flex:1; }
+.chatlist-top{ display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+.chatlist-name{ font-weight:800; font-family: var(--font-display); }
+.chatlist-time{ font-size:.72rem; color:var(--plum-soft); flex-shrink:0; }
+.chatlist-preview{
+  font-size:.85rem; color:var(--plum-soft); white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis; margin-top:2px;
+}
+.chatlist-badge{
+  margin-left:auto; background: var(--coral); color:#fff; font-size:.75rem; font-weight:800;
+  border-radius:999px; min-width:22px; height:22px; padding:0 6px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}

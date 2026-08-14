@@ -32,6 +32,17 @@ def send_group_message(user_id: int, message: str):
     return cur.lastrowid
 
 
+def get_last_group_message():
+    """Most recent message in the shared group chat, for the chat-list preview."""
+    return query_one(
+        """
+        SELECT group_messages.*, users.full_name, users.is_admin
+        FROM group_messages JOIN users ON users.id = group_messages.user_id
+        ORDER BY group_messages.id DESC LIMIT 1
+        """
+    )
+
+
 def get_group_messages(after_id: int = 0, limit: int = 200):
     return query_all(
         """
@@ -63,6 +74,14 @@ def get_admin_messages(user_id: int, after_id: int = 0, limit: int = 500):
     return query_all(
         "SELECT * FROM admin_messages WHERE user_id = ? AND id > ? ORDER BY id ASC LIMIT ?",
         (user_id, after_id, limit),
+    )
+
+
+def get_last_admin_message(user_id: int):
+    """Most recent message in a user's private thread with the admin, for the chat-list preview."""
+    return query_one(
+        "SELECT * FROM admin_messages WHERE user_id = ? ORDER BY id DESC LIMIT 1",
+        (user_id,),
     )
 
 
