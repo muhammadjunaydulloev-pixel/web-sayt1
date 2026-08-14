@@ -47,5 +47,42 @@
 <footer class="wrap">
   1300 Луғат — Русӣ ба Тоҷикӣ · Омӯзиши забон бо дарсҳо, тест ва сертификат
 </footer>
+
+{% set nu = nav_user(request) %}
+{% if nu %}
+<nav class="tabbar">
+  {% if nu.is_admin %}
+    <a href="/admin" class="tabbar-item {% if request.url.path.startswith('/admin') and not request.url.path.startswith('/admin/chat') %}active{% endif %}">
+      <span class="tabbar-icon">🛠️</span><span>Админ</span>
+    </a>
+    <a href="/admin/chat" class="tabbar-item {% if request.url.path.startswith('/admin/chat') %}active{% endif %}">
+      <span class="tabbar-icon">💬</span><span>Чат</span>
+      {% set au = nav_admin_chat_unread(request) %}
+      {% if au %}<span class="tabbar-badge">{{ au }}</span>{% endif %}
+    </a>
+    <a href="/logout" class="tabbar-item">
+      <span class="tabbar-icon">🚪</span><span>Баромадан</span>
+    </a>
+  {% else %}
+    <a href="/lessons" class="tabbar-item {% if request.url.path.startswith('/lessons') %}active{% endif %}">
+      <span class="tabbar-icon">📚</span><span>Дарсҳо</span>
+    </a>
+    <a href="/profile" class="tabbar-item {% if request.url.path.startswith('/profile') %}active{% endif %}">
+      <span class="tabbar-icon">👤</span><span>Профил</span>
+    </a>
+    <a href="/chat" class="tabbar-item {% if request.url.path == '/chat' %}active{% endif %}">
+      <span class="tabbar-icon">👥</span><span>Гурӯҳӣ</span>
+    </a>
+    <a href="/chat/admin" class="tabbar-item {% if request.url.path.startswith('/chat/admin') %}active{% endif %}">
+      <span class="tabbar-icon">🎧</span><span>Админ</span>
+      {% set uu = nav_chat_unread(request) %}
+      {% if uu %}<span class="tabbar-badge">{{ uu }}</span>{% endif %}
+    </a>
+    <a href="/logout" class="tabbar-item">
+      <span class="tabbar-icon">🚪</span><span>Баромадан</span>
+    </a>
+  {% endif %}
+</nav>
+{% endif %}
 </body>
 </html>

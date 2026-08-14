@@ -357,6 +357,51 @@ th{ font-family: var(--font-display); color: var(--plum-soft); font-size:.78rem;
   .lesson-row, .lesson-row.right{ flex-direction:row; }
 }
 
+/* ---------- Mobile bottom tab bar (WhatsApp-style) ---------- */
+.tabbar{ display:none; }
+
+@media (max-width: 768px){
+  .nav-links{ display:none; }
+  .nav-inner{ justify-content:center; }
+
+  body{ padding-bottom: 74px; }
+
+  .tabbar{
+    display:flex; align-items:stretch; justify-content:space-around;
+    position:fixed; left:0; right:0; bottom:0; z-index:50;
+    background:#fff; border-top:2px solid var(--line);
+    box-shadow: 0 -4px 14px rgba(43,33,64,.08);
+    padding: 4px 2px calc(4px + env(safe-area-inset-bottom));
+  }
+  .tabbar-item{
+    position:relative;
+    flex:1; min-width:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:2px; padding:6px 2px;
+    color: var(--plum-soft); text-decoration:none;
+    font-size:.66rem; font-weight:700; line-height:1.1;
+    border-radius: var(--radius-sm);
+  }
+  .tabbar-item span:not(.tabbar-icon):not(.tabbar-badge){
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;
+  }
+  .tabbar-icon{ font-size:1.25rem; line-height:1; }
+  .tabbar-item.active{ color: var(--teal-dark); }
+  .tabbar-item.active .tabbar-icon{ transform: translateY(-1px); }
+  .tabbar-item:active{ background: var(--cream-2); }
+  .tabbar-badge{
+    position:absolute; top:2px; right:calc(50% - 22px);
+    min-width:16px; height:16px; padding:0 4px; border-radius:999px;
+    background: var(--coral); color:#fff; font-size:.62rem; font-weight:800;
+    display:flex; align-items:center; justify-content:center;
+  }
+}
+
+@media (max-width: 380px){
+  .tabbar-item{ font-size:.6rem; }
+  .tabbar-icon{ font-size:1.1rem; }
+}
+
 :focus-visible{ outline: 3px solid var(--teal); outline-offset: 2px; }
 
 @media (prefers-reduced-motion: reduce){
