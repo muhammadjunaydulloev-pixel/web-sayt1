@@ -3,3 +3,31 @@
   {% if person.avatar %}{{ person.avatar }}{% else %}<span class="avatar-fallback">{{ (person.full_name or '?')[0]|upper }}</span>{% endif %}
 </span>
 {% endmacro %}
+
+{% macro rosette(cls='') %}
+<svg viewBox="0 0 200 200" class="rosette-svg {{ cls }}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <g>
+    <path d="M100,72 Q85.7,37.9 100,10 Q114.3,37.9 113,72 Z" fill="var(--coral)" transform="rotate(0 100 100)"/>
+    <path d="M100,72 Q85.7,37.9 100,10 Q114.3,37.9 113,72 Z" fill="var(--sun)" transform="rotate(45 100 100)"/>
+    <path d="M100,72 Q85.7,37.9 100,10 Q114.3,37.9 113,72 Z" fill="var(--teal)" transform="rotate(90 100 100)"/>
+    <path d="M100,72 Q85.7,37.9 100,10 Q114.3,37.9 113,72 Z" fill="var(--sun)" transform="rotate(135 100 100)"/>
+    <path d="M100,72 Q85.7,37.9 100,10 Q114.3,37.9 113,72 Z" fill="var(--coral)" transform="rotate(180 100 100)"/>
+    <path d="M100,72 Q85.7,37.9 100,10 Q114.3,37.9 113,72 Z" fill="var(--sun)" transform="rotate(225 100 100)"/>
+    <path d="M100,72 Q85.7,37.9 100,10 Q114.3,37.9 113,72 Z" fill="var(--teal)" transform="rotate(270 100 100)"/>
+    <path d="M100,72 Q85.7,37.9 100,10 Q114.3,37.9 113,72 Z" fill="var(--sun)" transform="rotate(315 100 100)"/>
+  </g>
+  <circle cx="100" cy="100" r="34" fill="var(--plum)"/>
+  <circle cx="100" cy="100" r="34" fill="none" stroke="var(--cream)" stroke-width="3"/>
+  <circle cx="100" cy="100" r="20" fill="var(--cream)"/>
+</svg>
+{% endmacro %}
+
+{% macro divider() %}
+<div class="ornament-divider" aria-hidden="true">
+  <span class="od-line"></span>
+  <span class="od-diamond"></span>
+  {{ rosette('od-rosette') }}
+  <span class="od-diamond"></span>
+  <span class="od-line"></span>
+</div>
+{% endmacro %}

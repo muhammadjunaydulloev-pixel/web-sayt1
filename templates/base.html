@@ -7,10 +7,12 @@
 <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-<header class="wrap nav">
+{% from "macros.html" import rosette %}
+<header class="nav-bar" id="site-nav">
+<div class="wrap nav">
   <div class="nav-inner">
     <a class="brand" href="/">
-      <span class="brand-mark"><span>🌞</span></span>
+      <span class="brand-mark">{{ rosette() }}</span>
       1300 Луғат
     </a>
     <nav class="nav-links">
@@ -39,6 +41,7 @@
       {% endif %}
     </nav>
   </div>
+</div>
 </header>
 <main>
 {% block content %}{% endblock %}
@@ -80,5 +83,33 @@
   {% endif %}
 </nav>
 {% endif %}
+
+<script>
+(function(){
+  var nav = document.getElementById('site-nav');
+  if(nav){
+    var onScroll = function(){
+      nav.classList.toggle('scrolled', window.scrollY > 8);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, {passive:true});
+  }
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var els = document.querySelectorAll('.reveal');
+  if(reduce || !('IntersectionObserver' in window) || !els.length){
+    els.forEach(function(el){ el.classList.add('visible'); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, {threshold:.15, rootMargin:'0px 0px -40px 0px'});
+    els.forEach(function(el){ io.observe(el); });
+  }
+})();
+</script>
 </body>
 </html>

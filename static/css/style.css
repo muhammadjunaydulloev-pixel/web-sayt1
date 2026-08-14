@@ -136,8 +136,16 @@ main{ flex:1; padding-bottom: 60px; }
 }
 
 /* ---------- Landing ---------- */
-.hero{ padding: 40px 0 20px; }
-.hero-grid{ display:grid; grid-template-columns: 1.1fr .9fr; gap:40px; align-items:center; }
+.hero{ padding: 40px 0 20px; position:relative; }
+.hero::before{
+  content:""; position:absolute; top:-40px; left:-60px; width:220px; height:220px;
+  background: var(--plum); opacity:.05; border-radius:50%; pointer-events:none;
+}
+.hero-watermark{
+  position:absolute; top:-10px; right:-30px; width:150px; height:150px; opacity:.07;
+  pointer-events:none; z-index:0;
+}
+.hero-grid{ display:grid; grid-template-columns: 1.1fr .9fr; gap:40px; align-items:center; position:relative; z-index:1; }
 .eyebrow{
   display:inline-block; font-family:var(--font-display); font-weight:700; font-size:.8rem;
   letter-spacing:.06em; text-transform:uppercase; color: var(--coral-dark);
@@ -148,22 +156,21 @@ main{ flex:1; padding-bottom: 60px; }
 .hero-cta{ display:flex; gap:14px; flex-wrap:wrap; }
 
 .medallion{
-  position:relative; width: 320px; height:320px; margin:0 auto;
-  border-radius:50%;
-  background:
-    repeating-conic-gradient(from 0deg, var(--sun) 0deg 8deg, var(--cream-2) 8deg 16deg);
+  position:relative; width: 340px; height:340px; margin:0 auto;
   display:flex; align-items:center; justify-content:center;
-  box-shadow: var(--shadow-md);
 }
 .medallion::before{
-  content:""; position:absolute; inset:22px; border-radius:50%;
-  background: conic-gradient(var(--teal), var(--coral), var(--sun), var(--teal));
-  opacity:.9;
+  content:""; position:absolute; inset:6px; border-radius:50%;
+  border: 2px dashed var(--sun-dark); opacity:.35;
 }
+.medallion-ring{
+  position:absolute; inset:0; animation: medallion-spin 70s linear infinite;
+}
+@keyframes medallion-spin{ to{ transform: rotate(360deg); } }
 .medallion-inner{
-  position:relative; width: 220px; height:220px; border-radius:50%; background:#fff;
+  position:relative; z-index:2; width: 208px; height:208px; border-radius:50%; background:#fff;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
-  box-shadow: inset 0 0 0 6px var(--cream);
+  box-shadow: var(--shadow-md), inset 0 0 0 6px var(--cream);
   text-align:center; padding: 10px;
 }
 .medallion-inner strong{ font-family:var(--font-display); font-size:2.4rem; color:var(--plum); line-height:1; }
@@ -407,6 +414,49 @@ th{ font-family: var(--font-display); color: var(--plum-soft); font-size:.78rem;
 @media (prefers-reduced-motion: reduce){
   *{ transition:none !important; animation:none !important; }
 }
+
+/* ---------- Suzani rosette signature ---------- */
+.rosette-svg{ display:block; width:100%; height:100%; }
+
+/* ---------- Sticky glass nav ---------- */
+.nav-bar{
+  position: sticky; top:0; z-index: 60;
+  background: rgba(255,248,236,.82); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  transition: box-shadow .25s ease, background .25s ease;
+}
+.nav-bar.scrolled{ box-shadow: 0 4px 18px rgba(43,33,64,.09); background: rgba(255,248,236,.94); }
+.brand-mark{ padding:6px; background:none; box-shadow:none; }
+.brand-mark .rosette-svg{ filter: drop-shadow(0 2px 3px rgba(43,33,64,.18)); }
+.brand:hover{ text-decoration:none; }
+.brand:hover .rosette-svg{ transform: rotate(18deg); transition: transform .3s ease; }
+
+/* ---------- Ornament divider (suzani border stitch) ---------- */
+.ornament-divider{ display:flex; align-items:center; justify-content:center; gap:12px; margin: 6px 0 2px; }
+.od-line{ flex:1; max-width:170px; height:2px; background: repeating-linear-gradient(90deg, var(--line) 0 7px, transparent 7px 14px); }
+.od-diamond{ width:8px; height:8px; flex-shrink:0; background: var(--coral); transform: rotate(45deg); border-radius:2px; }
+.od-rosette{ width:30px; height:30px; flex-shrink:0; }
+
+/* ---------- Scroll-reveal ---------- */
+.reveal{ opacity:0; transform: translateY(22px); transition: opacity .6s cubic-bezier(.2,.7,.3,1), transform .6s cubic-bezier(.2,.7,.3,1); }
+.reveal.visible{ opacity:1; transform:none; }
+.reveal-stagger.visible > *{ transition-delay: calc(var(--stagger-i, 0) * 60ms); }
+
+/* ---------- Lift-on-hover for cards ---------- */
+.topic-card, .feature-card, .word-card, .chatlist-item, .lesson-card{
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.topic-card:hover, .word-card:hover{
+  transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--sun);
+}
+.feature-card{ position:relative; overflow:hidden; }
+.feature-card::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:5px;
+  background: linear-gradient(90deg, var(--sun), var(--coral), var(--teal));
+  transform: scaleX(0); transform-origin:0 50%; transition: transform .3s ease;
+}
+.feature-card:hover{ transform: translateY(-5px); box-shadow: var(--shadow-md); }
+.feature-card:hover::before{ transform: scaleX(1); }
+.lesson-card:hover{ box-shadow: var(--shadow-md); border-color: var(--sun); }
 
 /* ---------- Nav badge ---------- */
 .nav-badge{

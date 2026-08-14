@@ -1,9 +1,11 @@
 {% extends "base.html" %}
+{% from "macros.html" import rosette, divider %}
 {% block content %}
 <div class="wrap">
   <section class="hero">
+    <div class="hero-watermark">{{ rosette() }}</div>
     <div class="hero-grid">
-      <div>
+      <div class="reveal">
         <span class="eyebrow">Русӣ → Тоҷикӣ</span>
         <h1>1300 калимаро дар 26 дарс бо бозӣ омӯзед</h1>
         <p class="lead">Ҳар дарс — 50 луғат ва як тести кӯтоҳ. Пешрафти шумо нигоҳ дошта мешавад, ҳатто агар имрӯз қатъ карда, фардо идома диҳед. Дар охир — сертификати расмии PDF.</p>
@@ -17,7 +19,8 @@
           <div><strong>{{ price }} смн</strong><span>як маротиба</span></div>
         </div>
       </div>
-      <div class="medallion">
+      <div class="medallion reveal">
+        <div class="medallion-ring">{{ rosette() }}</div>
         <div class="medallion-inner">
           <strong>1-уми 26</strong>
           <span>дарси ройгон дастрас аст</span>
@@ -26,37 +29,39 @@
     </div>
   </section>
 
+  {{ divider() }}
   <h2 class="section-title">Мавзӯъҳои дарсҳо</h2>
   <p class="section-sub">Аз салому алейк то ҳисоботи корӣ — луғатҳо аз ҳаёти ҳаррӯза гирифта шудаанд.</p>
   <div class="topic-grid">
     {% for num, title in lesson_titles %}
-    <div class="topic-card">
+    <div class="topic-card reveal" style="--stagger-i: {{ loop.index0 }}">
       <span class="num">Дарси {{ num }}</span>
       <span class="title">{{ title }}</span>
     </div>
     {% endfor %}
   </div>
 
+  {{ divider() }}
   <h2 class="section-title">Чӣ тавр кор мекунад</h2>
   <div class="feature-grid">
-    <div class="feature-card">
+    <div class="feature-card reveal">
       <div class="icon">📖</div>
       <h3>Дарс ба дарс</h3>
       <p>Ҳар дарс 50 калимаи русӣ-тоҷикиро дар бар мегирад, гурӯҳбандӣ шуда аз рӯи мавзӯъ.</p>
     </div>
-    <div class="feature-card">
+    <div class="feature-card reveal" style="--stagger-i:1">
       <div class="icon">✅</div>
       <h3>Тести интихобӣ</h3>
       <p>Пас аз ҳар дарс — 10 саволи 4-вариантӣ. Натиҷа ва пешрафт ҳамеша нигоҳ дошта мешавад.</p>
     </div>
-    <div class="feature-card">
+    <div class="feature-card reveal" style="--stagger-i:2">
       <div class="icon">🏆</div>
       <h3>Сертификат</h3>
       <p>Пас аз анҷоми ҳамаи 26 дарс, сертификати расмии PDF-и шумо тайёр мешавад.</p>
     </div>
   </div>
 
-  <div class="cta-band">
+  <div class="cta-band reveal">
     <h2>Дарси якум ройгон аст</h2>
     <p>Бе харҷ санҷед, баъд бо як пардохти хурд тамоми курсро кушоед.</p>
     <a href="/register" class="btn btn-primary">Ҳозир сабти ном кунед</a>
