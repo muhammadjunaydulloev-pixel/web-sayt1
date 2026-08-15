@@ -190,6 +190,35 @@
     }
   }
 
+  /* ---------- Саҳифаи вуруд: чашми парол ва ҳолати тугма ---------- */
+  function bindAuthUi() {
+    document.querySelectorAll('[data-toggle-password]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-toggle-password');
+        var input = document.getElementById(id);
+        if (!input) return;
+        var hidden = input.type === 'password';
+        input.type = hidden ? 'text' : 'password';
+        btn.setAttribute('aria-label', hidden ? 'Пинҳон кардани парол' : 'Нишон додани парол');
+        btn.classList.toggle('is-open', hidden);
+      });
+    });
+
+    var form = document.getElementById('auth-form');
+    if (form) {
+      form.addEventListener('submit', function () {
+        var submit = form.querySelector('button[type="submit"]');
+        if (submit) submit.classList.add('is-loading');
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindAuthUi);
+  } else {
+    bindAuthUi();
+  }
+
   window.SlFx = {
     playCorrectSound: playCorrectSound,
     playWrongSound: playWrongSound,

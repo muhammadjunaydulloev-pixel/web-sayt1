@@ -6,8 +6,10 @@
 <title>{% block title %}1300 Луғат — Русӣ ба Тоҷикӣ{% endblock %}</title>
 <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body>
-{% from "macros.html" import rosette %}
+<body class="{% block body_class %}{% endblock %}">
+{% from "macros.html" import rosette, icon %}
+{% set is_auth = self.body_class()|trim == 'page-auth' %}
+{% if not is_auth %}
 <header class="nav-bar" id="site-nav">
 <div class="wrap nav">
   <div class="nav-inner">
@@ -19,34 +21,36 @@
       {% set nu = nav_user(request) %}
       {% if nu %}
         {% if nu.is_admin %}
-          <a href="/admin">Панели админ</a>
+          <a href="/admin">{{ icon('dashboard') }} Панели админ</a>
           <a href="/admin/chat">
-            Чат
+            {{ icon('message') }} Чат
             {% set au = nav_admin_chat_unread(request) %}
             {% if au %}<span class="nav-badge">{{ au }}</span>{% endif %}
           </a>
         {% else %}
-          <a href="/lessons">Дарсҳо</a>
-          <a href="/profile">Профил</a>
+          <a href="/lessons">{{ icon('book') }} Дарсҳо</a>
+          <a href="/profile">{{ icon('user') }} Профил</a>
           <a href="/chat">
-            Чат
+            {{ icon('message') }} Чат
             {% set uu = nav_chat_unread(request) %}
             {% if uu %}<span class="nav-badge">{{ uu }}</span>{% endif %}
           </a>
         {% endif %}
-        <a href="/logout">Баромадан</a>
+        <a href="/logout">{{ icon('log-out') }} Баромадан</a>
       {% else %}
-        <a href="/login">Даромадан</a>
-        <a class="btn btn-primary btn-sm" href="/register">Оғоз кардан</a>
+        <a href="/login">{{ icon('log-in') }} Даромадан</a>
+        <a class="btn btn-primary btn-sm" href="/register">{{ icon('sparkles') }} Оғоз кардан</a>
       {% endif %}
     </nav>
   </div>
 </div>
 </header>
+{% endif %}
 <script src="/static/js/fx.js"></script>
 <main>
 {% block content %}{% endblock %}
 </main>
+{% if not is_auth %}
 <footer class="wrap">
   1300 Луғат — Русӣ ба Тоҷикӣ · Омӯзиши забон бо дарсҳо, тест ва сертификат
 </footer>
@@ -56,33 +60,34 @@
 <nav class="tabbar">
   {% if nu.is_admin %}
     <a href="/admin" class="tabbar-item {% if request.url.path.startswith('/admin') and not request.url.path.startswith('/admin/chat') %}active{% endif %}">
-      <span class="tabbar-icon">🛠️</span><span>Админ</span>
+      <span class="tabbar-icon">{{ icon('dashboard') }}</span><span>Админ</span>
     </a>
     <a href="/admin/chat" class="tabbar-item {% if request.url.path.startswith('/admin/chat') %}active{% endif %}">
-      <span class="tabbar-icon">💬</span><span>Чат</span>
+      <span class="tabbar-icon">{{ icon('message') }}</span><span>Чат</span>
       {% set au = nav_admin_chat_unread(request) %}
       {% if au %}<span class="tabbar-badge">{{ au }}</span>{% endif %}
     </a>
     <a href="/logout" class="tabbar-item">
-      <span class="tabbar-icon">🚪</span><span>Баромадан</span>
+      <span class="tabbar-icon">{{ icon('log-out') }}</span><span>Баромадан</span>
     </a>
   {% else %}
     <a href="/lessons" class="tabbar-item {% if request.url.path.startswith('/lessons') %}active{% endif %}">
-      <span class="tabbar-icon">📚</span><span>Дарсҳо</span>
+      <span class="tabbar-icon">{{ icon('book') }}</span><span>Дарсҳо</span>
     </a>
     <a href="/profile" class="tabbar-item {% if request.url.path.startswith('/profile') %}active{% endif %}">
-      <span class="tabbar-icon">👤</span><span>Профил</span>
+      <span class="tabbar-icon">{{ icon('user') }}</span><span>Профил</span>
     </a>
     <a href="/chat" class="tabbar-item {% if request.url.path.startswith('/chat') %}active{% endif %}">
-      <span class="tabbar-icon">💬</span><span>Чат</span>
+      <span class="tabbar-icon">{{ icon('message') }}</span><span>Чат</span>
       {% set uu = nav_chat_unread(request) %}
       {% if uu %}<span class="tabbar-badge">{{ uu }}</span>{% endif %}
     </a>
     <a href="/logout" class="tabbar-item">
-      <span class="tabbar-icon">🚪</span><span>Баромадан</span>
+      <span class="tabbar-icon">{{ icon('log-out') }}</span><span>Баромадан</span>
     </a>
   {% endif %}
 </nav>
+{% endif %}
 {% endif %}
 
 <script>
@@ -112,5 +117,8 @@
   }
 })();
 </script>
+{% if is_auth %}
+<script src="/static/js/auth.js"></script>
+{% endif %}
 </body>
 </html>

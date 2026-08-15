@@ -1,31 +1,95 @@
 {% extends "base.html" %}
+{% from "macros.html" import icon, rosette %}
 {% block title %}Сабти ном — 1300 Луғат{% endblock %}
+{% block body_class %}page-auth{% endblock %}
 {% block content %}
-<div class="wrap-narrow">
-  <div class="auth-card">
-    <h1>Сабти ном</h1>
-    <p class="auth-sub">Дарси якум пас аз сабти ном ройгон дастрас мешавад.</p>
-    {% if error %}<div class="form-error">{{ error }}</div>{% endif %}
-    <form method="post" action="/register">
-      <div class="field">
-        <label for="full_name">Ному насаб</label>
-        <input type="text" id="full_name" name="full_name" placeholder="Масалан: Аҳмадов Ҷамшед" required>
+<div class="auth-stage" id="auth-stage">
+  <div class="auth-gates" aria-hidden="true">
+    <div class="auth-gate auth-gate-left"></div>
+    <div class="auth-gate auth-gate-right"></div>
+  </div>
+  <div class="auth-aurora" aria-hidden="true"></div>
+  <div class="auth-orbs" aria-hidden="true">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+  </div>
+  <div class="auth-words" aria-hidden="true">
+    <span style="--x:10%; --y:16%; --d:0s">новый</span>
+    <span style="--x:80%; --y:12%; --d:1.1s">нав</span>
+    <span style="--x:16%; --y:80%; --d:.7s">старт</span>
+    <span style="--x:88%; --y:70%; --d:1.9s">оғоз</span>
+    <span style="--x:7%; --y:46%; --d:2.3s">ученик</span>
+    <span style="--x:91%; --y:40%; --d:.8s">хонанда</span>
+  </div>
+
+  <div class="auth-shell">
+    <aside class="auth-visual">
+      <div class="auth-logo-wrap">
+        <span class="auth-logo-glow"></span>
+        {{ rosette() }}
       </div>
-      <div class="field">
-        <label for="phone">Рақами телефон</label>
-        <input type="text" id="phone" name="phone" placeholder="+992 90 000 00 00" required>
+      <p class="auth-kicker">{{ icon('sparkles') }} Дарси якум ройгон</p>
+      <h2 class="auth-visual-title">Ба омӯзиш ҳамроҳ шавед</h2>
+      <p class="auth-visual-sub">50 калима, як тест, пешрафти шахсӣ аз рӯзи аввал.</p>
+      <ul class="auth-perks">
+        <li>{{ icon('check-circle') }} 1300 калимаи русӣ–тоҷикӣ</li>
+        <li>{{ icon('trophy') }} Сертификати PDF пас аз курс</li>
+        <li>{{ icon('lock') }} Пешрафт дар ҳисоби шумо нигоҳ дошта мешавад</li>
+      </ul>
+    </aside>
+
+    <section class="auth-panel">
+      <div class="auth-card auth-card-cinematic">
+        <div class="auth-card-mark">{{ icon('user') }}</div>
+        <h1>Сабти ном</h1>
+        <p class="auth-sub">Дарси якум пас аз сабти ном ройгон дастрас мешавад.</p>
+        {% if error %}<div class="form-error">{{ icon('shield') }} {{ error }}</div>{% endif %}
+        <form method="post" action="/register" class="auth-form" id="auth-form">
+          <div class="field">
+            <label for="full_name">Ному насаб</label>
+            <div class="input-wrap">
+              {{ icon('user', 'input-icon') }}
+              <input type="text" id="full_name" name="full_name" placeholder="Масалан: Аҳмадов Ҷамшед" required autocomplete="name">
+            </div>
+          </div>
+          <div class="field">
+            <label for="phone">Рақами телефон</label>
+            <div class="input-wrap">
+              {{ icon('phone', 'input-icon') }}
+              <input type="text" id="phone" name="phone" placeholder="+992 90 000 00 00" required autocomplete="tel">
+            </div>
+          </div>
+          <div class="field">
+            <label for="password">Парол</label>
+            <div class="input-wrap">
+              {{ icon('lock', 'input-icon') }}
+              <input type="password" id="password" name="password" required autocomplete="new-password">
+              <button type="button" class="input-eye" data-toggle-password="password" aria-label="Нишон додани парол">
+                <span class="eye-on">{{ icon('eye') }}</span>
+                <span class="eye-off">{{ icon('eye-off') }}</span>
+              </button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="password2">Такрори парол</label>
+            <div class="input-wrap">
+              {{ icon('lock', 'input-icon') }}
+              <input type="password" id="password2" name="password2" required autocomplete="new-password">
+              <button type="button" class="input-eye" data-toggle-password="password2" aria-label="Нишон додани парол">
+                <span class="eye-on">{{ icon('eye') }}</span>
+                <span class="eye-off">{{ icon('eye-off') }}</span>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-shimmer">
+            <span class="btn-label">{{ icon('sparkles') }} Сабти ном кардан</span>
+            <span class="btn-spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+        <div class="form-note">Аллакай сабт шудаед? <a href="/login">Даромадан</a></div>
       </div>
-      <div class="field">
-        <label for="password">Парол</label>
-        <input type="password" id="password" name="password" required>
-      </div>
-      <div class="field">
-        <label for="password2">Такрори парол</label>
-        <input type="password" id="password2" name="password2" required>
-      </div>
-      <button type="submit" class="btn btn-primary btn-block">Сабти ном кардан</button>
-    </form>
-    <div class="form-note">Аллакай сабт шудаед? <a href="/login">Даромадан</a></div>
+    </section>
   </div>
 </div>
 {% endblock %}

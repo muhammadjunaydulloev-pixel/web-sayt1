@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "macros.html" import avatar %}
+{% from "macros.html" import avatar, icon %}
 {% block title %}Профил — 1300 Луғат{% endblock %}
 {% block content %}
 <div class="wrap-narrow">
@@ -32,10 +32,10 @@
   <div class="card">
     <h3>Ҳолати курс</h3>
     {% if user.paid %}
-      <span class="badge badge-success">Курс кушода аст</span>
+      <span class="badge badge-success">{{ icon('unlock') }} Курс кушода аст</span>
     {% else %}
-      <span class="badge badge-warning">Курс баста аст — танҳо дарси 1 дастрас аст</span>
-      <p style="margin-top:10px;"><a href="/payment" class="btn btn-primary btn-sm">Кушодани курс</a></p>
+      <span class="badge badge-warning">{{ icon('lock') }} Курс баста аст — танҳо дарси 1 дастрас аст</span>
+      <p style="margin-top:10px;"><a href="/payment" class="btn btn-primary btn-sm">{{ icon('unlock') }} Кушодани курс</a></p>
     {% endif %}
     {% if payment and payment.status == 'pending' %}
       <p style="margin-top:10px; color:var(--plum-soft);">Расиди шумо фиристода шуд, интизори тасдиқи админ.</p>
@@ -48,7 +48,7 @@
     <h3>Сертификат</h3>
     {% if summary.course_completed %}
       <p>Табрик! Шумо ҳамаи {{ summary.total_lessons }} дарсро анҷом додед.</p>
-      <a href="/certificate/download" class="btn btn-primary">📄 Гирифтани сертификат (PDF)</a>
+      <a href="/certificate/download" class="btn btn-primary">{{ icon('award') }} Гирифтани сертификат (PDF)</a>
     {% else %}
       <p style="color:var(--plum-soft);">Пас аз анҷоми ҳамаи {{ summary.total_lessons }} дарс, сертификат дар ин ҷо дастрас мешавад.
       Ҳоло {{ summary.lessons_completed }}/{{ summary.total_lessons }} анҷом ёфтааст.</p>

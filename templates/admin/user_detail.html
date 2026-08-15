@@ -1,5 +1,5 @@
 {% extends "admin/admin_base.html" %}
-{% from "macros.html" import avatar %}
+{% from "macros.html" import avatar, icon %}
 {% set active = 'users' %}
 {% block admin_content %}
 <a href="/admin/users" class="back-link">← Ба рӯйхати корбарон</a>
@@ -20,7 +20,7 @@
         {% if user.paid %}Бастани дастрасӣ{% else %}Кушодани дастрасӣ (дастӣ){% endif %}
       </button>
     </form>
-    <a href="/admin/chat?user={{ user.id }}" class="btn btn-teal btn-sm">💬 Чат бо ин корбар</a>
+    <a href="/admin/chat?user={{ user.id }}" class="btn btn-teal btn-sm">{{ icon('message') }} Чат бо ин корбар</a>
   </div>
 </div>
 
@@ -36,7 +36,7 @@
   <h3>Сертификат</h3>
   {% if certificate %}
     <p>№ {{ certificate.certificate_id }} · содиршуда {{ certificate.issued_at[:10] }}</p>
-    <a href="/certificate/download" class="btn btn-primary btn-sm" style="pointer-events:none; opacity:.5;" title="Танҳо худи корбар метавонад боргирӣ кунад">📄 PDF (танҳо назди корбар дастрас аст)</a>
+    <a href="/certificate/download" class="btn btn-primary btn-sm" style="pointer-events:none; opacity:.5;" title="Танҳо худи корбар метавонад боргирӣ кунад">{{ icon('file') }} PDF (танҳо назди корбар дастрас аст)</a>
   {% else %}
     <p style="color:var(--plum-soft);">Ин корбар ҳанӯз сертификат нагирифтааст.</p>
   {% endif %}

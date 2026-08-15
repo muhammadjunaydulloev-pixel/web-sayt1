@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% from "macros.html" import icon %}
 {% block title %}Дарси {{ lesson_num }} — 1300 Луғат{% endblock %}
 {% block content %}
 <div class="wrap-narrow">
-  <a href="/lessons" style="font-weight:700;">← Ба рӯйхати дарсҳо</a>
+  <a href="/lessons" class="back-link">{{ icon('chevron-left') }} Ба рӯйхати дарсҳо</a>
   <h1 style="margin-top:14px;">Дарси {{ lesson_num }}: {{ lesson_title }}</h1>
   {% if completed %}
-    <span class="badge badge-success">Анҷом ёфтааст</span>
+    <span class="badge badge-success">{{ icon('check') }} Анҷом ёфтааст</span>
   {% endif %}
   <p style="color:var(--plum-soft); margin-top:10px;">Пеш аз тест, ин 50 луғатро як бор аз назар гузаронед.</p>
 
@@ -16,12 +17,12 @@
         <span class="ru">{{ w.ru }}</span>
         <span class="tj">{{ w.tj }}</span>
       </div>
-      <button type="button" class="word-speak-btn speak-word-btn" data-ru="{{ w.ru }}" title="Гӯш кардани талаффуз" aria-label="Гӯш кардани талаффуз">🔊</button>
+      <button type="button" class="word-speak-btn speak-word-btn" data-ru="{{ w.ru }}" title="Гӯш кардани талаффуз" aria-label="Гӯш кардани талаффуз">{{ icon('volume') }}</button>
     </div>
     {% endfor %}
   </div>
 
-  <a href="/lesson/{{ lesson_num }}/test" class="btn btn-primary btn-block">▶️ {% if completed %}Такрор кардани тест{% else %}Оғоз кардани тест{% endif %}</a>
+  <a href="/lesson/{{ lesson_num }}/test" class="btn btn-primary btn-block">{{ icon('play') }} {% if completed %}Такрор кардани тест{% else %}Оғоз кардани тест{% endif %}</a>
 </div>
 <script>
 document.querySelectorAll('.speak-word-btn').forEach(function(btn){

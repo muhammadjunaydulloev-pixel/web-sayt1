@@ -1,8 +1,9 @@
 {% extends "base.html" %}
+{% from "macros.html" import icon %}
 {% block title %}Дарсҳо — 1300 Луғат{% endblock %}
 {% block content %}
 <div class="wrap-narrow">
-  <h1>Салом, {{ user.full_name.split(' ')[0] }}! 👋</h1>
+  <h1>Салом, {{ user.full_name.split(' ')[0] }}!</h1>
 
   <div class="progress-summary">
     <div class="progress-ring" style="--pct: {{ (summary.lessons_completed / summary.total_lessons * 100) | round(1) }};">
@@ -11,7 +12,7 @@
     <div class="progress-facts">
       <div><strong>{{ summary.words_learned }}</strong><span>калимаи омӯхта</span></div>
       <div><strong>{{ summary.percent }}%</strong><span>дурустӣ дар тестҳо</span></div>
-      <div><strong>{% if user.paid %}✅{% else %}🔒{% endif %}</strong><span>{% if user.paid %}Курс кушода{% else %}Курс баста{% endif %}</span></div>
+      <div><strong>{% if user.paid %}{{ icon('unlock') }}{% else %}{{ icon('lock') }}{% endif %}</strong><span>{% if user.paid %}Курс кушода{% else %}Курс баста{% endif %}</span></div>
     </div>
   </div>
 
@@ -21,7 +22,7 @@
       <strong style="font-family: var(--font-display);">Дарси 1 ройгон аст</strong>
       <p style="margin:4px 0 0; color:var(--plum-soft);">Барои кушодани ҳамаи 26 дарс, расиди пардохтро фиристед.</p>
     </div>
-    <a href="/payment" class="btn btn-primary">Кушодани курс</a>
+    <a href="/payment" class="btn btn-primary">{{ icon('unlock') }} Кушодани курс</a>
   </div>
   {% endif %}
 
@@ -29,7 +30,7 @@
     {% for lesson in lessons %}
     <div class="lesson-row {% if loop.index0 % 2 == 1 %}right{% endif %} {% if lesson.locked %}locked{% endif %}">
       <div class="lesson-node {% if lesson.completed %}done{% elif lesson.locked %}locked{% elif lesson.is_next %}next{% endif %}">
-        {% if lesson.completed %}✓{% elif lesson.locked %}🔒{% else %}{{ lesson.number }}{% endif %}
+        {% if lesson.completed %}{{ icon('check') }}{% elif lesson.locked %}{{ icon('lock') }}{% else %}{{ lesson.number }}{% endif %}
       </div>
       <div class="lesson-card">
         <div>
@@ -37,11 +38,11 @@
           <div class="s">{{ lesson.title }}</div>
         </div>
         {% if lesson.locked %}
-          <a href="/payment" class="btn btn-ghost btn-sm">Кушодан</a>
+          <a href="/payment" class="btn btn-ghost btn-sm">{{ icon('unlock') }} Кушодан</a>
         {% elif lesson.completed %}
-          <a href="/lesson/{{ lesson.number }}" class="btn btn-ghost btn-sm">Такрор</a>
+          <a href="/lesson/{{ lesson.number }}" class="btn btn-ghost btn-sm">{{ icon('repeat') }} Такрор</a>
         {% else %}
-          <a href="/lesson/{{ lesson.number }}" class="btn btn-primary btn-sm">Оғоз</a>
+          <a href="/lesson/{{ lesson.number }}" class="btn btn-primary btn-sm">{{ icon('play') }} Оғоз</a>
         {% endif %}
       </div>
     </div>

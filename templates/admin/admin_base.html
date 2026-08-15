@@ -1,20 +1,21 @@
 {% extends "base.html" %}
+{% from "macros.html" import icon %}
 {% block content %}
 <div class="wrap">
   <h1 style="margin-top:20px;">Панели админ</h1>
   <div class="admin-shell">
     <nav class="admin-nav">
-      <a href="/admin" class="{% if active == 'dashboard' %}active{% endif %}">📊 Умумӣ</a>
-      <a href="/admin/users" class="{% if active == 'users' %}active{% endif %}">👥 Корбарон</a>
-      <a href="/admin/payments" class="{% if active == 'payments' %}active{% endif %}">💳 Пардохтҳо</a>
-      <a href="/admin/dictionary" class="{% if active == 'dictionary' %}active{% endif %}">📚 Луғатҳо</a>
-      <a href="/admin/certificates" class="{% if active == 'certificates' %}active{% endif %}">🏆 Сертификатҳо</a>
+      <a href="/admin" class="{% if active == 'dashboard' %}active{% endif %}">{{ icon('dashboard') }} Умумӣ</a>
+      <a href="/admin/users" class="{% if active == 'users' %}active{% endif %}">{{ icon('users') }} Корбарон</a>
+      <a href="/admin/payments" class="{% if active == 'payments' %}active{% endif %}">{{ icon('card') }} Пардохтҳо</a>
+      <a href="/admin/dictionary" class="{% if active == 'dictionary' %}active{% endif %}">{{ icon('library') }} Луғатҳо</a>
+      <a href="/admin/certificates" class="{% if active == 'certificates' %}active{% endif %}">{{ icon('trophy') }} Сертификатҳо</a>
       <a href="/admin/chat" class="{% if active == 'chat' %}active{% endif %}">
-        💬 Чат
+        {{ icon('message') }} Чат
         {% set au = nav_admin_chat_unread(request) %}
         {% if au %}<span class="nav-badge">{{ au }}</span>{% endif %}
       </a>
-      <a href="/chat/group" class="{% if active == 'group' %}active{% endif %}">🌐 Чати гурӯҳӣ</a>
+      <a href="/chat/group" class="{% if active == 'group' %}active{% endif %}">{{ icon('globe') }} Чати гурӯҳӣ</a>
     </nav>
     <div>
       {% block admin_content %}{% endblock %}

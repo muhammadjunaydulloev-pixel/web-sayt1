@@ -1,23 +1,96 @@
 {% extends "base.html" %}
+{% from "macros.html" import icon, rosette %}
 {% block title %}Даромадан — 1300 Луғат{% endblock %}
+{% block body_class %}page-auth{% endblock %}
 {% block content %}
-<div class="wrap-narrow">
-  <div class="auth-card">
-    <h1>Хуш омадед!</h1>
-    <p class="auth-sub">Барои идомаи омӯзиш ворид шавед.</p>
-    {% if error %}<div class="form-error">{{ error }}</div>{% endif %}
-    <form method="post" action="/login">
-      <div class="field">
-        <label for="phone">Рақами телефон</label>
-        <input type="text" id="phone" name="phone" placeholder="+992 90 000 00 00" required autofocus>
+<div class="auth-stage" id="auth-stage">
+  <div class="auth-gates" aria-hidden="true">
+    <div class="auth-gate auth-gate-left"></div>
+    <div class="auth-gate auth-gate-right"></div>
+  </div>
+  <div class="auth-aurora" aria-hidden="true"></div>
+  <div class="auth-orbs" aria-hidden="true">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+  </div>
+  <div class="auth-words" aria-hidden="true">
+    <span style="--x:8%; --y:14%; --d:0s">привет</span>
+    <span style="--x:78%; --y:10%; --d:1.2s">салом</span>
+    <span style="--x:18%; --y:78%; --d:.6s">книга</span>
+    <span style="--x:86%; --y:72%; --d:1.8s">китоб</span>
+    <span style="--x:6%; --y:48%; --d:2.4s">друг</span>
+    <span style="--x:90%; --y:38%; --d:.9s">дӯст</span>
+    <span style="--x:42%; --y:8%; --d:1.5s">учиться</span>
+    <span style="--x:58%; --y:86%; --d:2.1s">омӯхтан</span>
+    <span style="--x:72%; --y:22%; --d:.3s">дом</span>
+    <span style="--x:28%; --y:88%; --d:2.7s">хона</span>
+  </div>
+
+  <div class="auth-shell">
+    <aside class="auth-visual">
+      <div class="auth-logo-wrap">
+        <span class="auth-logo-glow"></span>
+        {{ rosette() }}
       </div>
-      <div class="field">
-        <label for="password">Парол</label>
-        <input type="password" id="password" name="password" required>
+      <p class="auth-kicker">{{ icon('sparkles') }} Академияи забон</p>
+      <h2 class="auth-visual-title">1300 Луғат</h2>
+      <p class="auth-visual-sub">Русӣ → Тоҷикӣ · 26 дарс · сертификат</p>
+      <div class="auth-flips">
+        <div class="flip-scene" style="--delay:0s">
+          <div class="flip-card">
+            <div class="flip-face flip-front">привет</div>
+            <div class="flip-face flip-back">салом</div>
+          </div>
+        </div>
+        <div class="flip-scene" style="--delay:1.1s">
+          <div class="flip-card">
+            <div class="flip-face flip-front">книга</div>
+            <div class="flip-face flip-back">китоб</div>
+          </div>
+        </div>
+        <div class="flip-scene" style="--delay:2.2s">
+          <div class="flip-card">
+            <div class="flip-face flip-front">учить</div>
+            <div class="flip-face flip-back">омӯхтан</div>
+          </div>
+        </div>
       </div>
-      <button type="submit" class="btn btn-primary btn-block">Даромадан</button>
-    </form>
-    <div class="form-note">Ҳанӯз сабти ном накардаед? <a href="/register">Сабти ном кунед</a></div>
+    </aside>
+
+    <section class="auth-panel">
+      <div class="auth-card auth-card-cinematic">
+        <div class="auth-card-mark">{{ icon('log-in') }}</div>
+        <h1>Хуш омадед</h1>
+        <p class="auth-sub">Барои идомаи омӯзиш ворид шавед.</p>
+        {% if error %}<div class="form-error">{{ icon('shield') }} {{ error }}</div>{% endif %}
+        <form method="post" action="/login" class="auth-form" id="auth-form">
+          <div class="field">
+            <label for="phone">Рақами телефон</label>
+            <div class="input-wrap">
+              {{ icon('phone', 'input-icon') }}
+              <input type="text" id="phone" name="phone" placeholder="+992 90 000 00 00" required autofocus autocomplete="tel">
+            </div>
+          </div>
+          <div class="field">
+            <label for="password">Парол</label>
+            <div class="input-wrap">
+              {{ icon('lock', 'input-icon') }}
+              <input type="password" id="password" name="password" required autocomplete="current-password">
+              <button type="button" class="input-eye" data-toggle-password="password" aria-label="Нишон додани парол">
+                <span class="eye-on">{{ icon('eye') }}</span>
+                <span class="eye-off">{{ icon('eye-off') }}</span>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-shimmer">
+            <span class="btn-label">{{ icon('arrow-right') }} Даромадан</span>
+            <span class="btn-spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+        <div class="form-note">Ҳанӯз сабти ном накардаед? <a href="/register">Сабти ном кунед</a></div>
+      </div>
+    </section>
   </div>
 </div>
 {% endblock %}

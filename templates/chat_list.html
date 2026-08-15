@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "macros.html" import icon %}
 {% block title %}Чат — 1300 Луғат{% endblock %}
 {% block content %}
 <div class="wrap-narrow">
@@ -7,7 +8,7 @@
 
   <div class="chatlist">
     <a href="/chat/group" class="chatlist-item">
-      <span class="chatlist-icon chatlist-icon-group">👥</span>
+      <span class="chatlist-icon chatlist-icon-group">{{ icon('users') }}</span>
       <div class="chatlist-body">
         <div class="chatlist-top">
           <span class="chatlist-name">Гурӯҳи умумӣ</span>
@@ -18,7 +19,7 @@
     </a>
 
     <a href="/chat/admin" class="chatlist-item">
-      <span class="chatlist-icon chatlist-icon-admin">🎧</span>
+      <span class="chatlist-icon chatlist-icon-admin">{{ icon('headphones') }}</span>
       <div class="chatlist-body">
         <div class="chatlist-top">
           <span class="chatlist-name">Дастгирӣ (Админ)</span>
