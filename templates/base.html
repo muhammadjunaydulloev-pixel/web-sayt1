@@ -21,22 +21,22 @@
       {% set nu = nav_user(request) %}
       {% if nu %}
         {% if nu.is_admin %}
-          <a href="/admin">{{ icon('dashboard') }} Панели админ</a>
-          <a href="/admin/chat">
+          <a href="/admin" class="{% if request.url.path.startswith('/admin') and not request.url.path.startswith('/admin/chat') %}active{% endif %}">{{ icon('dashboard') }} Панели админ</a>
+          <a href="/admin/chat" class="{% if request.url.path.startswith('/admin/chat') %}active{% endif %}">
             {{ icon('message') }} Чат
             {% set au = nav_admin_chat_unread(request) %}
             {% if au %}<span class="nav-badge">{{ au }}</span>{% endif %}
           </a>
         {% else %}
-          <a href="/lessons">{{ icon('book') }} Дарсҳо</a>
-          <a href="/profile">{{ icon('user') }} Профил</a>
-          <a href="/chat">
+          <a href="/lessons" class="{% if request.url.path.startswith('/lessons') %}active{% endif %}">{{ icon('book') }} Дарсҳо</a>
+          <a href="/profile" class="{% if request.url.path.startswith('/profile') %}active{% endif %}">{{ icon('user') }} Профил</a>
+          <a href="/chat" class="{% if request.url.path.startswith('/chat') %}active{% endif %}">
             {{ icon('message') }} Чат
             {% set uu = nav_chat_unread(request) %}
             {% if uu %}<span class="nav-badge">{{ uu }}</span>{% endif %}
           </a>
         {% endif %}
-        <a href="/logout">{{ icon('log-out') }} Баромадан</a>
+        <a href="/logout" class="nav-link-logout">{{ icon('log-out') }} Баромадан</a>
       {% else %}
         <a href="/login">{{ icon('log-in') }} Даромадан</a>
         <a class="btn btn-primary btn-sm" href="/register">{{ icon('sparkles') }} Оғоз кардан</a>

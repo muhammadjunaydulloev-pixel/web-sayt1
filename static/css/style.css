@@ -133,10 +133,41 @@ main{ flex:1; padding-bottom: 60px; }
   width:26px; height:26px; border-radius:50%; background:var(--cream);
   display:flex; align-items:center; justify-content:center; font-size:14px;
 }
-.nav-links{ display:flex; align-items:center; gap:18px; font-weight:700; }
-.nav-links a{ color: var(--plum-soft); display:inline-flex; align-items:center; gap:7px; }
-.nav-links .ui-icon{ width:16px; height:16px; }
-.nav-links a.active{ color: var(--teal-dark); }
+/* ---------- Top nav — premium pill buttons ---------- */
+.nav-links{ display:flex; align-items:center; gap:8px; font-weight:700; }
+.nav-links a{
+  position: relative;
+  display:inline-flex; align-items:center; gap:8px;
+  padding: 9px 16px 11px;
+  border-radius: 18px;
+  color: var(--plum-soft);
+  background: #fff;
+  border: 1.5px solid transparent;
+  box-shadow: 0 1px 2px rgba(22,16,34,.05);
+  text-decoration: none;
+  transition: transform .22s cubic-bezier(.2,.7,.3,1), box-shadow .22s ease,
+              border-color .22s ease, background-color .22s ease, color .22s ease;
+}
+.nav-links .ui-icon{ width:18px; height:18px; transition: transform .22s cubic-bezier(.2,.7,.3,1); }
+.nav-links a:hover{
+  color: var(--plum); text-decoration:none;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(22,16,34,.10);
+}
+.nav-links a:hover .ui-icon{ transform: scale(1.08); }
+.nav-links a:active{ transform: translateY(0) scale(.96); transition-duration: .1s; }
+.nav-links a.active{
+  color: var(--teal-dark);
+  background: rgba(15,118,110,.08);
+  border-color: rgba(15,118,110,.35);
+  box-shadow: 0 0 0 4px rgba(15,118,110,.08), 0 8px 18px rgba(15,118,110,.12);
+}
+.nav-links a.active::after{
+  content:""; position:absolute; left:50%; bottom:4px; transform:translateX(-50%);
+  width:5px; height:5px; border-radius:50%; background: var(--teal);
+}
+.nav-links a.nav-link-logout{ color: var(--coral-dark); }
+.nav-links a.nav-link-logout:hover{ background: rgba(232,93,76,.08); color: var(--coral-dark); }
 .chip-coins{
   display:flex; align-items:center; gap:6px; background:#fff; border:2px solid var(--line);
   border-radius:999px; padding:6px 14px; font-weight:800; font-size:.85rem;
@@ -393,51 +424,87 @@ th{ font-family: var(--font-display); color: var(--plum-soft); font-size:.78rem;
   .lesson-row, .lesson-row.right{ flex-direction:row; }
 }
 
-/* ---------- Mobile bottom tab bar (WhatsApp-style) ---------- */
+/* ---------- Mobile bottom tab bar (premium cards) ---------- */
 .tabbar{ display:none; }
 
 @media (max-width: 768px){
   .nav-links{ display:none; }
   .nav-inner{ justify-content:center; }
 
-  body{ padding-bottom: 74px; }
+  body{ padding-bottom: 92px; }
 
   .tabbar{
-    display:flex; align-items:stretch; justify-content:space-around;
+    display:flex; align-items:stretch; justify-content:space-between;
+    gap:8px;
     position:fixed; left:0; right:0; bottom:0; z-index:50;
-    background:#fff; border-top:2px solid var(--line);
-    box-shadow: 0 -4px 14px rgba(43,33,64,.08);
-    padding: 4px 2px calc(4px + env(safe-area-inset-bottom));
+    background: #fff;
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -8px 28px rgba(22,16,34,.09);
+    padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
   }
   .tabbar-item{
     position:relative;
     flex:1; min-width:0;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:2px; padding:6px 2px;
+    gap:4px; padding:10px 4px 12px;
     color: var(--plum-soft); text-decoration:none;
     font-size:.66rem; font-weight:700; line-height:1.1;
-    border-radius: var(--radius-sm);
+    background: #fff;
+    border: 1.5px solid transparent;
+    border-radius: 24px;
+    box-shadow: 0 1px 2px rgba(22,16,34,.03);
+    transition: transform .25s cubic-bezier(.2,.7,.3,1), box-shadow .25s ease,
+                border-color .25s ease, background-color .25s ease, color .25s ease;
   }
   .tabbar-item span:not(.tabbar-icon):not(.tabbar-badge){
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;
   }
-  .tabbar-icon{ font-size:1.25rem; line-height:1; display:flex; }
+  .tabbar-icon{
+    font-size:1.25rem; line-height:1; display:flex;
+    transition: transform .25s cubic-bezier(.2,.7,.3,1), color .25s ease;
+  }
   .tabbar-icon .ui-icon{ width:22px; height:22px; }
-  .tabbar-item.active{ color: var(--teal-dark); }
-  .tabbar-item.active .tabbar-icon{ transform: translateY(-1px); }
-  .tabbar-item:active{ background: var(--cream-2); }
+
+  .tabbar-item:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(22,16,34,.09);
+  }
+  .tabbar-item:hover .tabbar-icon{ transform: scale(1.08); }
+  .tabbar-item:active{
+    transform: translateY(0) scale(.95);
+    background: var(--cream-2);
+    transition-duration: .1s;
+  }
+
+  .tabbar-item.active{
+    color: var(--teal-dark);
+    background: rgba(15,118,110,.07);
+    border-color: rgba(15,118,110,.32);
+    box-shadow: 0 0 0 4px rgba(15,118,110,.07), 0 10px 20px rgba(15,118,110,.10);
+  }
+  .tabbar-item.active .tabbar-icon{ color: var(--teal); transform: translateY(-1px); }
+  .tabbar-item.active::after{
+    content:"";
+    position:absolute; left:50%; bottom:5px; transform:translateX(-50%);
+    width:5px; height:5px; border-radius:50%; background: var(--teal);
+  }
+
   .tabbar-badge{
-    position:absolute; top:2px; right:calc(50% - 22px);
+    position:absolute; top:4px; right:calc(50% - 26px);
     min-width:16px; height:16px; padding:0 4px; border-radius:999px;
     background: var(--coral); color:#fff; font-size:.62rem; font-weight:800;
     display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 2px 6px rgba(196,68,56,.35);
   }
 }
 
 @media (max-width: 380px){
-  .tabbar-item{ font-size:.6rem; }
+  .tabbar{ padding: 8px 6px calc(8px + env(safe-area-inset-bottom)); gap:5px; }
+  .tabbar-item{ font-size:.6rem; padding:8px 2px 10px; border-radius:18px; }
   .tabbar-icon{ font-size:1.1rem; }
+  .tabbar-icon .ui-icon{ width:19px; height:19px; }
 }
+
 
 :focus-visible{ outline: 3px solid var(--teal); outline-offset: 2px; }
 
