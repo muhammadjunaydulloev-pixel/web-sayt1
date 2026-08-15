@@ -17,28 +17,28 @@
       <span class="brand-mark">{{ rosette() }}</span>
       1300 Луғат
     </a>
-    <nav class="nav-links">
+    <nav class="nav-links" aria-label="Менюи асосӣ">
       {% set nu = nav_user(request) %}
       {% if nu %}
         {% if nu.is_admin %}
-          <a href="/admin" class="{% if request.url.path.startswith('/admin') and not request.url.path.startswith('/admin/chat') %}active{% endif %}">{{ icon('dashboard') }} Панели админ</a>
-          <a href="/admin/chat" class="{% if request.url.path.startswith('/admin/chat') %}active{% endif %}">
+          <a href="/admin" class="nav-link {% if request.url.path.startswith('/admin') and not request.url.path.startswith('/admin/chat') %}active{% endif %}" aria-label="Панели админ" {% if request.url.path.startswith('/admin') and not request.url.path.startswith('/admin/chat') %}aria-current="page"{% endif %}>{{ icon('dashboard') }} Панели админ</a>
+          <a href="/admin/chat" class="nav-link {% if request.url.path.startswith('/admin/chat') %}active{% endif %}" aria-label="Чат" {% if request.url.path.startswith('/admin/chat') %}aria-current="page"{% endif %}>
             {{ icon('message') }} Чат
             {% set au = nav_admin_chat_unread(request) %}
             {% if au %}<span class="nav-badge">{{ au }}</span>{% endif %}
           </a>
         {% else %}
-          <a href="/lessons" class="{% if request.url.path.startswith('/lessons') %}active{% endif %}">{{ icon('book') }} Дарсҳо</a>
-          <a href="/profile" class="{% if request.url.path.startswith('/profile') %}active{% endif %}">{{ icon('user') }} Профил</a>
-          <a href="/chat" class="{% if request.url.path.startswith('/chat') %}active{% endif %}">
+          <a href="/lessons" class="nav-link {% if request.url.path.startswith('/lessons') %}active{% endif %}" aria-label="Дарсҳо" {% if request.url.path.startswith('/lessons') %}aria-current="page"{% endif %}>{{ icon('book') }} Дарсҳо</a>
+          <a href="/profile" class="nav-link {% if request.url.path.startswith('/profile') %}active{% endif %}" aria-label="Профил" {% if request.url.path.startswith('/profile') %}aria-current="page"{% endif %}>{{ icon('user') }} Профил</a>
+          <a href="/chat" class="nav-link {% if request.url.path.startswith('/chat') %}active{% endif %}" aria-label="Чат" {% if request.url.path.startswith('/chat') %}aria-current="page"{% endif %}>
             {{ icon('message') }} Чат
             {% set uu = nav_chat_unread(request) %}
             {% if uu %}<span class="nav-badge">{{ uu }}</span>{% endif %}
           </a>
         {% endif %}
-        <a href="/logout" class="nav-link-logout">{{ icon('log-out') }} Баромадан</a>
+        <a href="/logout" class="nav-link nav-link-logout" aria-label="Баромадан">{{ icon('log-out') }} Баромадан</a>
       {% else %}
-        <a href="/login">{{ icon('log-in') }} Даромадан</a>
+        <a href="/login" class="nav-link">{{ icon('log-in') }} Даромадан</a>
         <a class="btn btn-primary btn-sm" href="/register">{{ icon('sparkles') }} Оғоз кардан</a>
       {% endif %}
     </nav>
@@ -57,32 +57,32 @@
 
 {% set nu = nav_user(request) %}
 {% if nu %}
-<nav class="tabbar">
+<nav class="tabbar" aria-label="Менюи асосӣ">
   {% if nu.is_admin %}
-    <a href="/admin" class="tabbar-item {% if request.url.path.startswith('/admin') and not request.url.path.startswith('/admin/chat') %}active{% endif %}">
+    <a href="/admin" class="tabbar-item {% if request.url.path.startswith('/admin') and not request.url.path.startswith('/admin/chat') %}active{% endif %}" aria-label="Панели админ" {% if request.url.path.startswith('/admin') and not request.url.path.startswith('/admin/chat') %}aria-current="page"{% endif %}>
       <span class="tabbar-icon">{{ icon('dashboard') }}</span><span>Админ</span>
     </a>
-    <a href="/admin/chat" class="tabbar-item {% if request.url.path.startswith('/admin/chat') %}active{% endif %}">
+    <a href="/admin/chat" class="tabbar-item {% if request.url.path.startswith('/admin/chat') %}active{% endif %}" aria-label="Чат" {% if request.url.path.startswith('/admin/chat') %}aria-current="page"{% endif %}>
       <span class="tabbar-icon">{{ icon('message') }}</span><span>Чат</span>
       {% set au = nav_admin_chat_unread(request) %}
       {% if au %}<span class="tabbar-badge">{{ au }}</span>{% endif %}
     </a>
-    <a href="/logout" class="tabbar-item">
+    <a href="/logout" class="tabbar-item tabbar-item-logout" aria-label="Баромадан">
       <span class="tabbar-icon">{{ icon('log-out') }}</span><span>Баромадан</span>
     </a>
   {% else %}
-    <a href="/lessons" class="tabbar-item {% if request.url.path.startswith('/lessons') %}active{% endif %}">
+    <a href="/lessons" class="tabbar-item {% if request.url.path.startswith('/lessons') %}active{% endif %}" aria-label="Дарсҳо" {% if request.url.path.startswith('/lessons') %}aria-current="page"{% endif %}>
       <span class="tabbar-icon">{{ icon('book') }}</span><span>Дарсҳо</span>
     </a>
-    <a href="/profile" class="tabbar-item {% if request.url.path.startswith('/profile') %}active{% endif %}">
+    <a href="/profile" class="tabbar-item {% if request.url.path.startswith('/profile') %}active{% endif %}" aria-label="Профил" {% if request.url.path.startswith('/profile') %}aria-current="page"{% endif %}>
       <span class="tabbar-icon">{{ icon('user') }}</span><span>Профил</span>
     </a>
-    <a href="/chat" class="tabbar-item {% if request.url.path.startswith('/chat') %}active{% endif %}">
+    <a href="/chat" class="tabbar-item {% if request.url.path.startswith('/chat') %}active{% endif %}" aria-label="Чат" {% if request.url.path.startswith('/chat') %}aria-current="page"{% endif %}>
       <span class="tabbar-icon">{{ icon('message') }}</span><span>Чат</span>
       {% set uu = nav_chat_unread(request) %}
       {% if uu %}<span class="tabbar-badge">{{ uu }}</span>{% endif %}
     </a>
-    <a href="/logout" class="tabbar-item">
+    <a href="/logout" class="tabbar-item tabbar-item-logout" aria-label="Баромадан">
       <span class="tabbar-icon">{{ icon('log-out') }}</span><span>Баромадан</span>
     </a>
   {% endif %}
