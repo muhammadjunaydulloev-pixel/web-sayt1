@@ -2,6 +2,13 @@
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Load variables from a local .env file if one exists (never committed to git).
+try:
+    from dotenv import load_dotenv
+    load_dotenv(os.path.join(BASE_DIR, ".env"))
+except ImportError:
+    pass
 DB_PATH = os.path.join(BASE_DIR, "database", "app.db")
 WORDS_JSON_PATH = os.path.join(BASE_DIR, "data", "words.json")
 CERTIFICATES_DIR = os.path.join(BASE_DIR, "static", "certificates")
@@ -35,3 +42,12 @@ AVATARS = [
 os.makedirs(CERTIFICATES_DIR, exist_ok=True)
 os.makedirs(RECEIPTS_DIR, exist_ok=True)
 os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+
+# ---------- AI Assistant ----------
+# The API key must NEVER be hardcoded here or shipped to the frontend.
+# Set these in a local ".env" file (see ".env.example"). Supported providers:
+# "openai", "anthropic". Leave AI_PROVIDER as "none" (or AI_API_KEY empty) to
+# run the assistant in offline demo mode until real credentials are added.
+AI_PROVIDER = os.getenv("AI_PROVIDER", "none").strip().lower()
+AI_API_KEY = os.getenv("AI_API_KEY", "").strip()
+AI_MODEL = os.getenv("AI_MODEL", "").strip()

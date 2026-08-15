@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{% block title %}1300 Луғат — Русӣ ба Тоҷикӣ{% endblock %}</title>
 <link rel="stylesheet" href="/static/css/style.css">
+<link rel="stylesheet" href="/static/css/ai-assistant.css">
 </head>
 <body class="{% block body_class %}{% endblock %}">
 {% from "macros.html" import rosette, icon %}
@@ -87,6 +88,51 @@
     </a>
   {% endif %}
 </nav>
+{% endif %}
+
+{% if nu and not nu.is_admin %}
+<div id="ai-assistant-root">
+  <button id="ai-assistant-fab" class="ai-fab" type="button" aria-haspopup="dialog" aria-controls="ai-assistant-panel">
+    <span class="ai-fab-emoji">🤖</span>
+    <span class="ai-fab-label">AI Ёрдамчӣ</span>
+  </button>
+
+  <div id="ai-assistant-backdrop" class="ai-backdrop" hidden></div>
+
+  <div id="ai-assistant-panel" class="ai-panel" role="dialog" aria-modal="true" aria-label="AI Ёрдамчӣ" hidden>
+    <div class="ai-panel-header">
+      <div class="ai-panel-title">
+        <span class="ai-panel-title-emoji">🤖</span>
+        <div>
+          <div>AI Assistant</div>
+          <div class="ai-panel-subtitle">Ёрдамчии омӯзиши забони русӣ</div>
+        </div>
+      </div>
+      <button type="button" id="ai-panel-close" class="ai-panel-close" aria-label="Пӯшидан">✕</button>
+    </div>
+
+    <div id="ai-context-chip" class="ai-context-chip" data-active="false">
+      <span id="ai-context-chip-text"></span>
+      <button type="button" id="ai-context-chip-clear" aria-label="Пок кардани контекст">✕</button>
+    </div>
+
+    <div class="ai-quick-actions">
+      <button type="button" class="ai-quick-btn" data-action="explain">💡 Фаҳмон</button>
+      <button type="button" class="ai-quick-btn" data-action="sentence">📝 Ҷумла соз</button>
+      <button type="button" class="ai-quick-btn" data-action="translate">🌐 Тарҷума</button>
+      <button type="button" class="ai-quick-btn" data-action="test">🧠 Тест соз</button>
+      <button type="button" class="ai-quick-btn" data-action="pronounce">🔊 Талаффуз</button>
+    </div>
+
+    <div id="ai-messages" class="ai-messages"></div>
+
+    <form id="ai-form" class="ai-form">
+      <input type="text" id="ai-input" class="ai-input" placeholder="Саволатонро нависед…" maxlength="2000" autocomplete="off" required>
+      <button type="submit" id="ai-send-btn" class="ai-send-btn" aria-label="Фиристодан">➤</button>
+    </form>
+  </div>
+</div>
+<script src="/static/js/ai-assistant.js"></script>
 {% endif %}
 {% endif %}
 
