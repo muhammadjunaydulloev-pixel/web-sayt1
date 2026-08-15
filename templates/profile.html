@@ -1,17 +1,89 @@
 {% extends "base.html" %}
 {% from "macros.html" import avatar, icon %}
-{% block title %}Профил — 1300 Луғат{% endblock %}
+{% block title %}Dashboard — 1300 Луғат{% endblock %}
 {% block content %}
-<div class="wrap-narrow">
-  <div class="profile-head">
-    {{ avatar(user, 'lg') }}
-    <div>
-      <h1 style="margin-bottom:2px;">{{ user.full_name }}</h1>
-      <p style="color:var(--plum-soft); margin:0;">{{ user.phone }}</p>
+<div class="wrap-dash">
+
+  <!-- Hero Card -->
+  <div class="dash-hero reveal">
+    <div class="dash-hero-top">
+      {{ avatar(user, 'lg') }}
+      <div class="dash-hero-text">
+        <h1 class="dash-hero-greet">Салом, {{ user.full_name.split(' ')[0] }} 👋</h1>
+        <p class="dash-hero-sub">Имрӯз омӯзишро идома деҳ!</p>
+      </div>
     </div>
+    {% if continue_lesson %}
+    <a href="/lesson/{{ continue_lesson.number }}" class="btn btn-primary dash-hero-cta">{{ icon('play') }} Идомаи омӯзиш</a>
+    {% elif summary.course_completed %}
+    <a href="/certificate/download" class="btn btn-primary dash-hero-cta">{{ icon('award') }} Гирифтани сертификат</a>
+    {% else %}
+    <a href="/lessons" class="btn btn-primary dash-hero-cta">{{ icon('book') }} Дидани дарсҳо</a>
+    {% endif %}
   </div>
 
-  <div class="card">
+  <!-- Daily Goal -->
+  <div class="card dash-goal reveal" id="dash-goal-card" data-achieved="{{ 'true' if today_goal.achieved else 'false' }}">
+    <div class="dash-goal-head">
+      <span class="dash-goal-title">{{ icon('target') }} Ҳадафи имрӯз</span>
+      <span class="dash-goal-count">{{ today_goal.current }} / {{ today_goal.goal }} калима</span>
+    </div>
+    <div class="dash-goal-bar">
+      <div class="dash-goal-fill" id="dash-goal-fill" style="--pct:{{ today_goal.percent }}"></div>
+    </div>
+    <p class="dash-goal-done" id="dash-goal-done" {% if not today_goal.achieved %}style="display:none;"{% endif %}>
+      {{ icon('check-circle') }} Аҷоиб! Ҳадафи имрӯза иҷро шуд.
+    </p>
+  </div>
+
+  <!-- Progress Cards -->
+  <div class="dash-cards reveal reveal-stagger">
+    <div class="dash-card dash-card-cyan" style="--stagger-i:0">
+      <span class="dash-card-icon">{{ icon('library') }}</span>
+      <strong>{{ summary.words_learned }} / {{ summary.total_words }}</strong>
+      <span>Калимаҳо</span>
+    </div>
+    <div class="dash-card dash-card-purple" style="--stagger-i:1">
+      <span class="dash-card-icon">{{ icon('trophy') }}</span>
+      <strong>{{ summary.lessons_completed }} / {{ summary.total_lessons }}</strong>
+      <span>Дарсҳо</span>
+    </div>
+    <div class="dash-card dash-card-orange" style="--stagger-i:2">
+      <span class="dash-card-icon">{{ icon('flame') }}</span>
+      <strong>{{ summary.streak_days }} рӯз</strong>
+      <span>Streak</span>
+    </div>
+    <div class="dash-card dash-card-pink" style="--stagger-i:3">
+      <span class="dash-card-icon">{{ icon('zap') }}</span>
+      <strong>{{ summary.xp }} XP</strong>
+      <span>Таҷриба</span>
+    </div>
+  </div>
+  <p class="dash-accuracy">{{ icon('check') }} Дурустии умумии тестҳо: <strong>{{ summary.percent }}%</strong></p>
+
+  <!-- Continue Learning -->
+  {% if continue_lesson %}
+  <div class="card dash-continue reveal">
+    <h3 class="dash-continue-heading">{{ icon('book') }} Идомаи омӯзиш</h3>
+    <div class="dash-continue-row">
+      <div class="dash-continue-node">{{ continue_lesson.number }}</div>
+      <div class="dash-continue-info">
+        <div class="t">{{ continue_lesson.title }}</div>
+        <div class="s">Дарси {{ continue_lesson.number }} · {{ continue_lesson.learned }}/{{ continue_lesson.total }} калима</div>
+        <div class="dash-continue-bar"><div class="dash-continue-fill" style="--pct:{{ continue_lesson.percent }}"></div></div>
+      </div>
+      <a href="/lesson/{{ continue_lesson.number }}" class="btn btn-primary btn-sm dash-continue-btn">Идома додан {{ icon('arrow-right') }}</a>
+    </div>
+  </div>
+  {% else %}
+  <div class="card dash-continue dash-continue-done reveal">
+    <h3 class="dash-continue-heading">{{ icon('trophy') }} Курс анҷом ёфт!</h3>
+    <p style="color:var(--plum-soft); margin:0;">Шумо ҳамаи {{ summary.total_lessons }} дарсро анҷом додед. Офарин!</p>
+  </div>
+  {% endif %}
+
+  <!-- Avatar -->
+  <div class="card reveal">
     <h3>Аватар</h3>
     <p style="color:var(--plum-soft); margin-top:-4px;">Симои худро аз галерея интихоб кунед.</p>
     <form method="post" action="/profile/avatar">
@@ -23,13 +95,8 @@
     </form>
   </div>
 
-  <div class="stat-cards">
-    <div class="card"><strong>{{ summary.lessons_completed }}/{{ summary.total_lessons }}</strong><span>дарси анҷомёфта</span></div>
-    <div class="card"><strong>{{ summary.words_learned }}</strong><span>калимаи омӯхта</span></div>
-    <div class="card"><strong>{{ summary.percent }}%</strong><span>дурустии тестҳо</span></div>
-  </div>
-
-  <div class="card">
+  <!-- Course status -->
+  <div class="card reveal">
     <h3>Ҳолати курс</h3>
     {% if user.paid %}
       <span class="badge badge-success">{{ icon('unlock') }} Курс кушода аст</span>
@@ -44,7 +111,8 @@
     {% endif %}
   </div>
 
-  <div class="card">
+  <!-- Certificate -->
+  <div class="card reveal">
     <h3>Сертификат</h3>
     {% if summary.course_completed %}
       <p>Табрик! Шумо ҳамаи {{ summary.total_lessons }} дарсро анҷом додед.</p>
@@ -55,4 +123,26 @@
     {% endif %}
   </div>
 </div>
+
+<script>
+(function(){
+  var goalCard = document.getElementById('dash-goal-card');
+  var fill = document.getElementById('dash-goal-fill');
+  if(!goalCard || !fill) return;
+
+  // Animate the bar in from 0 on load.
+  var targetPct = fill.style.getPropertyValue('--pct') || '0';
+  fill.style.setProperty('--pct', '0');
+  requestAnimationFrame(function(){
+    setTimeout(function(){ fill.style.setProperty('--pct', targetPct); }, 80);
+  });
+
+  if(goalCard.dataset.achieved === 'true' && window.SlFx){
+    setTimeout(function(){
+      SlFx.burstConfetti(goalCard);
+      SlFx.playFinishSound(true);
+    }, 700);
+  }
+})();
+</script>
 {% endblock %}

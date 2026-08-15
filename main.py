@@ -232,9 +232,12 @@ def profile_page(request: Request):
     summary = lesson_service.get_progress_summary(user["id"])
     certificate = certificate_service.get_existing_certificate(user["id"])
     payment = payment_service.get_latest_payment(user["id"])
+    continue_lesson = lesson_service.get_continue_lesson_info(user["id"])
+    today_goal = lesson_service.get_today_progress(user["id"])
     return templates.TemplateResponse("profile.html", {
         "request": request, "user": user, "summary": summary,
         "certificate": certificate, "payment": payment, "avatars": AVATARS,
+        "continue_lesson": continue_lesson, "today_goal": today_goal,
     })
 
 
