@@ -17,10 +17,7 @@
         <span class="ru">{{ w.ru }}</span>
         <span class="tj">{{ w.tj }}</span>
       </div>
-      <div class="word-card-actions">
-        <button type="button" class="word-speak-btn speak-word-btn" data-ru="{{ w.ru }}" title="Гӯш кардани талаффуз" aria-label="Гӯш кардани талаффуз">{{ icon('volume') }}</button>
-        <button type="button" class="word-ai-btn ask-ai-btn" data-ru="{{ w.ru }}" data-tj="{{ w.tj }}" title="Аз AI пурс" aria-label="Аз AI пурс">🤖</button>
-      </div>
+      <button type="button" class="word-speak-btn speak-word-btn" data-ru="{{ w.ru }}" title="Гӯш кардани талаффуз" aria-label="Гӯш кардани талаффуз">{{ icon('volume') }}</button>
     </div>
     {% endfor %}
   </div>
@@ -31,13 +28,6 @@
 document.querySelectorAll('.speak-word-btn').forEach(function(btn){
   btn.addEventListener('click', function(){
     SlFx.speakRu(btn.dataset.ru, btn);
-  });
-});
-document.querySelectorAll('.ask-ai-btn').forEach(function(btn){
-  btn.addEventListener('click', function(){
-    if (window.AIAssistant) {
-      window.AIAssistant.openWithWord(btn.dataset.ru, btn.dataset.tj);
-    }
   });
 });
 </script>
