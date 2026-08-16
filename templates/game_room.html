@@ -2,6 +2,9 @@
 {% from "macros.html" import icon %}
 {% block title %}Ҳуҷра #{{ room_code }} — Мусобиқа{% endblock %}
 {% block content %}
+<div style="background:#ef4444; color:#fff; text-align:center; font-weight:800; padding:10px; font-size:.85rem;">
+  🔧 КОДИ НАВ v4 — агар ин хатро мебинед, деплой дуруст аст
+</div>
 <div class="wrap-narrow game-shell">
 
 {% if not is_member %}
@@ -25,7 +28,7 @@
     <span class="badge badge-muted">Ҳуҷра #{{ room_code }}</span>
   </div>
 
-  <div id="game-debug" class="game-debug-banner" style="display:none;"></div>
+  <div id="game-debug" class="game-debug-banner">⏳ JS кор карда истодааст…</div>
 
   <div id="game-leaderboard" class="game-leaderboard-strip"></div>
 
@@ -95,6 +98,11 @@
   const myId = {{ user.id }};
   let lastKey = null;
   let celebrated = false;
+
+  window.addEventListener('error', function(ev){
+    const box = document.getElementById('game-debug');
+    if(box) box.textContent = '❌ JS хатогии умумӣ: ' + (ev && ev.message ? ev.message : 'номаълум');
+  });
 
   const sections = ['lobby','starting','question','reveal','finished'];
   function showSection(name){
@@ -217,7 +225,7 @@
       <div class="game-reveal-row ${res.user_id === myId ? 'me' : ''}">
         <span class="avatar avatar-sm">${avatarSpan(res)}</span>
         <span class="game-reveal-name">${esc(res.full_name.split(' ')[0])}</span>
-        <span class="game-reveal-status">${res.correct ? '{{ icon("check-circle") }}' : (res.answered ? '✗' : '…')}</span>
+        <span class="game-reveal-status">${res.correct ? '✅' : (res.answered ? '❌' : '…')}</span>
         <span class="game-reveal-points">${res.points > 0 ? '+' + res.points : ''}</span>
       </div>
     `).join('');
@@ -289,22 +297,19 @@
       if(!res.ok){
         let msg = 'HTTP хатогии ' + res.status;
         try{ const j = await res.json(); if(j && j.error) msg = j.error; }catch(parseErr){}
-        debugBox.style.display = '';
-        debugBox.textContent = 'Хатои сервер: ' + msg;
+        debugBox.textContent = '❌ Хатои сервер: ' + msg;
         setTimeout(poll, 1500);
         return;
       }
       const state = await res.json();
       try{
         render(state);
-        debugBox.style.display = 'none';
+        debugBox.textContent = '✅ Ҳолат: ' + state.status + ' / ' + state.phase + ' — ' + new Date().toLocaleTimeString();
       }catch(renderErr){
-        debugBox.style.display = '';
-        debugBox.textContent = 'Хатои саҳифа: ' + (renderErr && renderErr.message ? renderErr.message : String(renderErr));
+        debugBox.textContent = '❌ Хатои саҳифа: ' + (renderErr && renderErr.message ? renderErr.message : String(renderErr));
       }
     }catch(networkErr){
-      debugBox.style.display = '';
-      debugBox.textContent = 'Хатои пайваст: ' + (networkErr && networkErr.message ? networkErr.message : String(networkErr));
+      debugBox.textContent = '❌ Хатои пайваст: ' + (networkErr && networkErr.message ? networkErr.message : String(networkErr));
     }
     setTimeout(poll, 1000);
   }

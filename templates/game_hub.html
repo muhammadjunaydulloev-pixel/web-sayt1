@@ -91,8 +91,9 @@
 document.getElementById('copy-code-btn').addEventListener('click', function(){
   const code = document.getElementById('my-game-code').textContent.trim();
   navigator.clipboard && navigator.clipboard.writeText(code);
+  const originalHTML = this.innerHTML;
   this.textContent = '✓ Нусхабардорӣ шуд';
-  setTimeout(() => { this.innerHTML = '{{ icon("file") }} Нусхабардорӣ'; }, 1600);
+  setTimeout(() => { this.innerHTML = originalHTML; }, 1600);
 });
 </script>
 {% endblock %}
