@@ -28,7 +28,7 @@
   <div id="game-leaderboard" class="game-leaderboard-strip"></div>
 
   <!-- LOBBY -->
-  <div id="section-lobby" class="card reveal" style="display:none;">
+  <div id="section-lobby" class="card" style="display:none;">
     <h2>{{ icon('users') }} Толори интизорӣ</h2>
     <p style="color:var(--ink-soft); margin-top:-6px;">Рамзи ҳуҷраро ба дӯстонатон диҳед — то 4 нафар метавонанд ҳамроҳ шаванд.</p>
     <div class="game-room-code-big">#{{ room_code }}</div>
@@ -41,7 +41,7 @@
   </div>
 
   <!-- STARTING COUNTDOWN -->
-  <div id="section-starting" class="card reveal game-starting" style="display:none;">
+  <div id="section-starting" class="card game-starting" style="display:none;">
     <div class="game-countdown-num" id="starting-num">3</div>
     <p>Тайёр шавед…</p>
   </div>
@@ -65,7 +65,7 @@
   </div>
 
   <!-- REVEAL -->
-  <div id="section-reveal" class="card reveal" style="display:none;">
+  <div id="section-reveal" class="card" style="display:none;">
     <div class="game-reveal-word">
       <span id="reveal-ru"></span> → <strong id="reveal-tj"></strong>
     </div>
@@ -74,7 +74,7 @@
   </div>
 
   <!-- FINISHED -->
-  <div id="section-finished" class="card reveal" style="display:none;">
+  <div id="section-finished" class="card" style="display:none;">
     <h2 style="text-align:center;">{{ icon('trophy') }} Бозӣ анҷом ёфт!</h2>
     <div id="podium" class="game-podium"></div>
     <div id="final-list" class="game-final-list"></div>
@@ -97,7 +97,9 @@
   const sections = ['lobby','starting','question','reveal','finished'];
   function showSection(name){
     sections.forEach(s => {
-      document.getElementById('section-' + s).style.display = (s === name) ? '' : 'none';
+      const el = document.getElementById('section-' + s);
+      el.style.display = (s === name) ? '' : 'none';
+      if(s === name) el.classList.add('visible');
     });
   }
 
