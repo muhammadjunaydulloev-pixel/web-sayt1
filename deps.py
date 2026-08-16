@@ -4,7 +4,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from services.auth_service import get_user_by_id
-from services import chat_service
+from services import chat_service, game_service
 from config import BASE_DIR
 import os
 
@@ -32,9 +32,18 @@ def nav_admin_chat_unread(request: Request) -> int:
     return chat_service.total_unread_for_admin()
 
 
+def nav_game_invites(request: Request) -> int:
+    """Pending Мусобиқа invites for the logged-in user — for the nav badge."""
+    user = _current_user_from_session(request)
+    if not user or user["is_admin"]:
+        return 0
+    return game_service.count_incoming_invites(user["id"])
+
+
 templates.env.globals["nav_chat_unread"] = nav_chat_unread
 templates.env.globals["nav_admin_chat_unread"] = nav_admin_chat_unread
 templates.env.globals["nav_user"] = _current_user_from_session
+templates.env.globals["nav_game_invites"] = nav_game_invites
 
 
 def get_current_user(request: Request):

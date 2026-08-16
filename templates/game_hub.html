@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% from "macros.html" import avatar, icon %}
+{% block title %}Мусобиқа — 1300 Луғат{% endblock %}
+{% block content %}
+<div class="wrap-narrow">
+  <h1>{{ icon('zap') }} Мусобиқа</h1>
+  <p style="color:var(--ink-soft); margin-top:-8px;">Дӯстонатонро даъват кунед ва дар тарҷумаи калимаҳо ким киро мағлуб кунед — то 4 нафар якҷоя!</p>
+
+  {% if error %}
+  <div class="form-error reveal">{{ error }}</div>
+  {% endif %}
+
+  {% if active_room %}
+  <a href="/game/room/{{ active_room.code }}" class="card game-active-banner reveal">
+    <span class="game-active-dot"></span>
+    <div>
+      <strong>{% if active_room.status == 'lobby' %}Шумо дар толори интизорӣ ҳастед{% else %}Бозии шумо идома дорад!{% endif %}</strong>
+      <span>Ҳуҷра #{{ active_room.code }} — барои баргаштан пахш кунед {{ icon('arrow-right') }}</span>
+    </div>
+  </a>
+  {% endif %}
+
+  <div class="card game-id-card reveal">
+    <h3>{{ icon('sparkles') }} Айди шахсии шумо</h3>
+    <p style="color:var(--ink-soft); margin-top:-4px;">Ин рамзро ба дӯстатон диҳед, то ӯ шуморо даъват кунад.</p>
+    <div class="game-id-display" id="my-game-code">{{ user.game_code }}</div>
+    <button type="button" class="btn btn-ghost btn-sm" id="copy-code-btn">{{ icon('file') }} Нусхабардорӣ</button>
+  </div>
+
+  <div class="card reveal">
+    <h3>{{ icon('users') }} Даъват кардани дӯст</h3>
+    <p style="color:var(--ink-soft); margin-top:-4px;">Айди 6-рақамаи дӯстатонро нависед.</p>
+    <form method="post" action="/game/invite" class="game-code-form">
+      <input type="text" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="Мисол: 483920" required>
+      <button type="submit" class="btn btn-primary">{{ icon('zap') }} Даъват</button>
+    </form>
+  </div>
+
+  {% if incoming %}
+  <div class="card reveal">
+    <h3>{{ icon('message') }} Даъватҳои воридотӣ</h3>
+    <div class="chatlist">
+      {% for inv in incoming %}
+      <div class="chatlist-item game-invite-row">
+        {{ avatar({'avatar': inv.from_avatar, 'full_name': inv.from_name}, 'sm') }}
+        <div class="chatlist-body">
+          <div class="chatlist-name">{{ inv.from_name }}</div>
+          <div class="chatlist-preview">Даъват ба мусобиқа — Ҳуҷра #{{ inv.room_code }}</div>
+        </div>
+        <div class="game-invite-actions">
+          <form method="post" action="/game/invite/{{ inv.id }}/accept"><button type="submit" class="btn btn-teal btn-sm">{{ icon('check') }} Қабул</button></form>
+          <form method="post" action="/game/invite/{{ inv.id }}/decline"><button type="submit" class="btn btn-ghost btn-sm">Рад</button></form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if outgoing %}
+  <div class="card reveal">
+    <h3>{{ icon('repeat') }} Даъватҳои фиристодашуда</h3>
+    <div class="chatlist">
+      {% for inv in outgoing %}
+      <div class="chatlist-item game-invite-row">
+        {{ avatar({'avatar': inv.to_avatar, 'full_name': inv.to_name}, 'sm') }}
+        <div class="chatlist-body">
+          <div class="chatlist-name">{{ inv.to_name }}</div>
+          <div class="chatlist-preview">Мунтазири ҷавоб… — Ҳуҷра #{{ inv.room_code }}</div>
+        </div>
+        <div class="game-invite-actions">
+          <form method="post" action="/game/invite/{{ inv.id }}/cancel"><button type="submit" class="btn btn-ghost btn-sm">Бекор кардан</button></form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="card reveal">
+    <h3>{{ icon('target') }} Пайвастшавӣ бо рамзи ҳуҷра</h3>
+    <p style="color:var(--ink-soft); margin-top:-4px;">Агар дӯстатон рамзи ҳуҷраро ба шумо дода бошад.</p>
+    <form method="post" action="/game/join" class="game-code-form">
+      <input type="text" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="Рамзи ҳуҷра" required>
+      <button type="submit" class="btn btn-ghost">{{ icon('arrow-right') }} Ҳамроҳ шудан</button>
+    </form>
+  </div>
+</div>
+
+<script>
+document.getElementById('copy-code-btn').addEventListener('click', function(){
+  const code = document.getElementById('my-game-code').textContent.trim();
+  navigator.clipboard && navigator.clipboard.writeText(code);
+  this.textContent = '✓ Нусхабардорӣ шуд';
+  setTimeout(() => { this.innerHTML = '{{ icon("file") }} Нусхабардорӣ'; }, 1600);
+});
+</script>
+{% endblock %}

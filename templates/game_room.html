@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon %}
+{% block title %}Ҳуҷра #{{ room_code }} — Мусобиқа{% endblock %}
+{% block content %}
+<div class="wrap-narrow game-shell">
+
+{% if not is_member %}
+  <div class="card reveal" style="text-align:center;">
+    {% if can_join %}
+      <h2>{{ icon('zap') }} Ба ин ҳуҷра ҳамроҳ шавед?</h2>
+      <p style="color:var(--ink-soft);">Ҳуҷра #{{ room_code }} мунтазири бозингарони бештар аст.</p>
+      <form method="post" action="/game/room/{{ room_code }}/join">
+        <button type="submit" class="btn btn-primary">{{ icon('users') }} Ҳамроҳ шудан</button>
+      </form>
+    {% else %}
+      <h2>{{ icon('lock') }} Ин ҳуҷра дастрас нест</h2>
+      <p style="color:var(--ink-soft);">Мумкин аст бозӣ аллакай сар шуда бошад ё ҳуҷра пур бошад.</p>
+      <a href="/game" class="btn btn-ghost">{{ icon('chevron-left') }} Бозгашт ба Мусобиқа</a>
+    {% endif %}
+  </div>
+
+{% else %}
+  <div class="game-topbar">
+    <a href="/game" class="back-link">{{ icon('chevron-left') }} Мусобиқа</a>
+    <span class="badge badge-muted">Ҳуҷра #{{ room_code }}</span>
+  </div>
+
+  <div id="game-leaderboard" class="game-leaderboard-strip"></div>
+
+  <!-- LOBBY -->
+  <div id="section-lobby" class="card reveal" style="display:none;">
+    <h2>{{ icon('users') }} Толори интизорӣ</h2>
+    <p style="color:var(--ink-soft); margin-top:-6px;">Рамзи ҳуҷраро ба дӯстонатон диҳед — то 4 нафар метавонанд ҳамроҳ шаванд.</p>
+    <div class="game-room-code-big">#{{ room_code }}</div>
+    <div id="lobby-slots" class="game-lobby-slots"></div>
+    <p id="lobby-hint" class="game-hint"></p>
+    <div class="game-lobby-actions">
+      <button type="button" id="start-btn" class="btn btn-primary btn-block" style="display:none;">{{ icon('play') }} Сар кардани бозӣ</button>
+      <form method="post" action="/game/room/{{ room_code }}/leave"><button type="submit" class="btn btn-ghost">{{ icon('log-out') }} Баромадан аз ҳуҷра</button></form>
+    </div>
+  </div>
+
+  <!-- STARTING COUNTDOWN -->
+  <div id="section-starting" class="card reveal game-starting" style="display:none;">
+    <div class="game-countdown-num" id="starting-num">3</div>
+    <p>Тайёр шавед…</p>
+  </div>
+
+  <!-- QUESTION -->
+  <div id="section-question" class="test-shell" style="display:none;">
+    <div class="game-round-label">
+      <span id="round-label"></span>
+      <span id="timer-num" class="game-timer-num"></span>
+    </div>
+    <div class="test-progress-bar"><div id="timer-fill" class="test-progress-fill game-timer-fill" style="width:100%;"></div></div>
+    <div class="test-word-card">
+      <div class="label">Тарҷума кунед</div>
+      <div class="ru-word-row">
+        <div class="ru-word" id="q-ru"></div>
+        <button type="button" class="word-speak-btn" id="q-speak-btn" title="Гӯш кардани талаффуз" aria-label="Гӯш кардани талаффуз">{{ icon('volume') }}</button>
+      </div>
+    </div>
+    <div class="choice-grid" id="q-choices"></div>
+    <p id="q-waiting" class="game-hint" style="display:none;">Ҷавоби шумо сабт шуд — мунтазири дигарон…</p>
+  </div>
+
+  <!-- REVEAL -->
+  <div id="section-reveal" class="card reveal" style="display:none;">
+    <div class="game-reveal-word">
+      <span id="reveal-ru"></span> → <strong id="reveal-tj"></strong>
+    </div>
+    <div id="reveal-results" class="game-reveal-results"></div>
+    <p class="game-hint">Даври навбатӣ ба зудӣ сар мешавад…</p>
+  </div>
+
+  <!-- FINISHED -->
+  <div id="section-finished" class="card reveal" style="display:none;">
+    <h2 style="text-align:center;">{{ icon('trophy') }} Бозӣ анҷом ёфт!</h2>
+    <div id="podium" class="game-podium"></div>
+    <div id="final-list" class="game-final-list"></div>
+    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:18px;">
+      <a href="/game" class="btn btn-primary">{{ icon('zap') }} Мусобиқаи нав</a>
+      <form method="post" action="/game/room/{{ room_code }}/leave"><button type="submit" class="btn btn-ghost">{{ icon('log-out') }} Баромадан</button></form>
+    </div>
+  </div>
+{% endif %}
+</div>
+
+{% if is_member %}
+<script>
+(function(){
+  const roomCode = "{{ room_code }}";
+  const myId = {{ user.id }};
+  let lastKey = null;
+  let celebrated = false;
+
+  const sections = ['lobby','starting','question','reveal','finished'];
+  function showSection(name){
+    sections.forEach(s => {
+      document.getElementById('section-' + s).style.display = (s === name) ? '' : 'none';
+    });
+  }
+
+  function esc(s){ const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+  function avatarSpan(p){
+    return p.avatar ? esc(p.avatar) : '<span class="avatar-fallback">' + esc((p.full_name||'?')[0].toUpperCase()) + '</span>';
+  }
+
+  function renderLeaderboardStrip(state){
+    const box = document.getElementById('game-leaderboard');
+    if(state.status === 'lobby'){ box.style.display = 'none'; return; }
+    box.style.display = 'flex';
+    box.innerHTML = state.leaderboard.map((p, i) => `
+      <div class="game-lb-chip ${p.is_me ? 'me' : ''} ${p.left ? 'left' : ''}">
+        <span class="game-lb-rank">${i + 1}</span>
+        <span class="avatar avatar-sm">${avatarSpan(p)}</span>
+        <span class="game-lb-name">${esc(p.full_name.split(' ')[0])}</span>
+        <span class="game-lb-score">${p.score}</span>
+      </div>
+    `).join('');
+  }
+
+  function renderLobby(state){
+    const isHost = state.viewer_id === state.host_id;
+    const slots = document.getElementById('lobby-slots');
+    let html = '';
+    state.leaderboard.forEach(p => {
+      html += `
+        <div class="game-slot filled">
+          <span class="avatar avatar-md">${avatarSpan(p)}</span>
+          <span>${esc(p.full_name.split(' ')[0])}${p.is_host ? ' 👑' : ''}</span>
+        </div>`;
+    });
+    for(let i = state.leaderboard.length; i < state.max_players; i++){
+      html += `<div class="game-slot empty"><span class="avatar avatar-md">…</span><span>Мунтазир…</span></div>`;
+    }
+    slots.innerHTML = html;
+
+    const startBtn = document.getElementById('start-btn');
+    const hint = document.getElementById('lobby-hint');
+    if(isHost){
+      startBtn.style.display = '';
+      const enough = state.leaderboard.length >= state.min_players;
+      startBtn.disabled = !enough;
+      hint.textContent = enough
+        ? 'Шумо метавонед бозиро сар кунед ё мунтазири боз як нафар шавед (то 4).'
+        : `Барои сар кардан ҳадди ақал ${state.min_players} бозингар лозим аст.`;
+    } else {
+      startBtn.style.display = 'none';
+      hint.textContent = 'Мунтазири он ҳастем, ки соҳиби ҳуҷра бозиро сар кунад…';
+    }
+  }
+
+  let startingShown = -1;
+  function renderStarting(state){
+    const n = Math.max(1, Math.ceil(state.seconds_left || 1));
+    document.getElementById('starting-num').textContent = n;
+  }
+
+  let lastRoundRendered = -1;
+  function renderQuestion(state){
+    document.getElementById('round-label').textContent = `Даври ${state.round_number} аз ${state.total_rounds}`;
+
+    if(state.round_number !== lastRoundRendered){
+      lastRoundRendered = state.round_number;
+      document.getElementById('q-ru').textContent = state.question.ru;
+      const speakBtn = document.getElementById('q-speak-btn');
+      speakBtn.onclick = () => window.SlFx && SlFx.speakRu(state.question.ru, speakBtn);
+      const grid = document.getElementById('q-choices');
+      grid.innerHTML = '';
+      state.choices.forEach(c => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.textContent = c.tj;
+        btn.dataset.id = c.id;
+        btn.onclick = () => submitAnswer(c.id, btn);
+        grid.appendChild(btn);
+      });
+      document.getElementById('q-waiting').style.display = 'none';
+    }
+
+    if(state.my_answer){
+      Array.from(document.getElementById('q-choices').children).forEach(b => {
+        b.disabled = true;
+        if(Number(b.dataset.id) === state.my_answer.choice_word_id){
+          b.classList.add(state.my_answer.is_correct ? 'correct' : 'wrong');
+        }
+      });
+      document.getElementById('q-waiting').style.display = '';
+    }
+
+    updateTimer(state);
+  }
+
+  function updateTimer(state){
+    const fill = document.getElementById('timer-fill');
+    const num = document.getElementById('timer-num');
+    const total = state.round_seconds || 1;
+    const left = Math.max(0, state.seconds_left || 0);
+    fill.style.width = Math.round((left / total) * 100) + '%';
+    fill.classList.toggle('urgent', left <= total * 0.3);
+    num.textContent = Math.ceil(left);
+  }
+
+  function renderReveal(state){
+    const r = state.reveal;
+    if(!r) return;
+    document.getElementById('reveal-ru').textContent = r.ru;
+    document.getElementById('reveal-tj').textContent = r.correct_tj;
+    const box = document.getElementById('reveal-results');
+    box.innerHTML = r.results.map(res => `
+      <div class="game-reveal-row ${res.user_id === myId ? 'me' : ''}">
+        <span class="avatar avatar-sm">${avatarSpan(res)}</span>
+        <span class="game-reveal-name">${esc(res.full_name.split(' ')[0])}</span>
+        <span class="game-reveal-status">${res.correct ? '{{ icon("check-circle") }}' : (res.answered ? '✗' : '…')}</span>
+        <span class="game-reveal-points">${res.points > 0 ? '+' + res.points : ''}</span>
+      </div>
+    `).join('');
+
+    const iAmCorrect = r.results.find(x => x.user_id === myId && x.correct);
+    if(window.SlFx){
+      if(iAmCorrect) SlFx.celebrateCorrect(document.getElementById('section-reveal'));
+      else SlFx.playWrongSound();
+    }
+  }
+
+  function renderFinished(state){
+    const ranked = state.leaderboard;
+    const podium = document.getElementById('podium');
+    const medals = ['🥇','🥈','🥉'];
+    podium.innerHTML = ranked.slice(0, 3).map((p, i) => `
+      <div class="game-podium-spot spot-${i+1}">
+        <div class="game-podium-medal">${medals[i]}</div>
+        <span class="avatar avatar-lg">${avatarSpan(p)}</span>
+        <div class="game-podium-name">${esc(p.full_name.split(' ')[0])}</div>
+        <div class="game-podium-score">${p.score}</div>
+      </div>
+    `).join('');
+
+    document.getElementById('final-list').innerHTML = ranked.map((p, i) => `
+      <div class="game-final-row ${p.is_me ? 'me' : ''}">
+        <span>${i+1}.</span>
+        <span class="avatar avatar-sm">${avatarSpan(p)}</span>
+        <span class="game-final-name">${esc(p.full_name)}</span>
+        <span class="game-final-score">${p.score} хол</span>
+      </div>
+    `).join('');
+
+    if(!celebrated){
+      celebrated = true;
+      const iWon = ranked.length && ranked[0].is_me;
+      if(window.SlFx) SlFx.playFinishSound(!!iWon);
+      if(iWon && window.SlFx) SlFx.burstConfetti(podium);
+    }
+  }
+
+  function render(state){
+    const key = state.status + ':' + state.phase + ':' + state.round_number;
+    renderLeaderboardStrip(state);
+
+    if(state.status === 'lobby'){
+      showSection('lobby');
+      renderLobby(state);
+    } else if(state.phase === 'starting'){
+      showSection('starting');
+      renderStarting(state);
+    } else if(state.phase === 'question'){
+      showSection('question');
+      renderQuestion(state);
+    } else if(state.phase === 'reveal'){
+      showSection('reveal');
+      if(key !== lastKey) renderReveal(state);
+    } else if(state.status === 'finished'){
+      showSection('finished');
+      renderFinished(state);
+    }
+    lastKey = key;
+  }
+
+  async function poll(){
+    try{
+      const res = await fetch(`/api/game/room/${roomCode}/state`);
+      if(!res.ok){ return; }
+      const state = await res.json();
+      render(state);
+    }catch(e){ /* retry next tick */ }
+    setTimeout(poll, 1000);
+  }
+
+  async function submitAnswer(choiceId, btnEl){
+    Array.from(document.getElementById('q-choices').children).forEach(b => b.disabled = true);
+    const form = new FormData();
+    form.append('choice_id', choiceId);
+    try{
+      const res = await fetch(`/api/game/room/${roomCode}/answer`, { method: 'POST', body: form });
+      const state = await res.json();
+      if(!state.error) render(state);
+    }catch(e){}
+  }
+
+  document.getElementById('start-btn') && document.getElementById('start-btn').addEventListener('click', async () => {
+    document.getElementById('start-btn').disabled = true;
+    await fetch(`/game/room/${roomCode}/start`, { method: 'POST' });
+    poll();
+  });
+
+  poll();
+})();
+</script>
+{% endif %}
+{% endblock %}

@@ -1295,3 +1295,129 @@ th{ font-family: var(--font-display); color: var(--ink-soft); font-size:.78rem; 
 @media (prefers-reduced-motion: reduce){
   .dash-goal-fill{ transition:none; }
 }
+
+/* ==========================================================================
+   Мусобиқа — live multiplayer duel (hub, lobby, rounds, podium)
+   ========================================================================== */
+
+/* ---- Hub ---- */
+.game-active-banner{
+  display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;
+  border-color: rgba(52,211,153,.4); box-shadow: var(--glow-green);
+}
+.game-active-banner:hover{ text-decoration:none; transform: translateY(-2px); }
+.game-active-banner strong{ display:block; color: var(--ink); font-family: var(--font-display); }
+.game-active-banner span{ font-size:.85rem; color: var(--ink-soft); }
+.game-active-dot{
+  width:14px; height:14px; border-radius:50%; flex-shrink:0;
+  background: var(--c-green); box-shadow: 0 0 0 4px rgba(52,211,153,.2);
+  animation: fx-pulse 1.4s ease-in-out infinite;
+}
+
+.game-id-card{ text-align:center; }
+.game-id-display{
+  font-family: var(--font-display); font-size: 2.4rem; font-weight:800; letter-spacing:.12em;
+  background: var(--grad-brand); -webkit-background-clip:text; background-clip:text; color:transparent;
+  margin: 10px 0 14px;
+}
+
+.game-code-form{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+.game-code-form input{
+  flex:1; min-width:160px; padding: 12px 16px; border-radius: var(--radius-sm);
+  border:1px solid var(--glass-border); background: rgba(255,255,255,.04); color: var(--ink);
+  font-family: var(--font-display); font-size:1.1rem; letter-spacing:.08em; text-align:center;
+}
+.game-code-form input:focus{ outline:none; border-color: var(--c-cyan); box-shadow: 0 0 0 3px rgba(34,211,238,.14); }
+
+.game-invite-row{ align-items:center; }
+.game-invite-actions{ display:flex; gap:8px; margin-left:auto; flex-shrink:0; }
+.game-invite-actions form{ display:inline; }
+
+/* ---- Room shell ---- */
+.game-shell{ padding-bottom: 20px; }
+.game-topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.game-hint{ text-align:center; color: var(--ink-soft); font-size:.88rem; font-weight:700; margin: 10px 0 0; }
+
+.game-leaderboard-strip{
+  display:flex; gap:8px; overflow-x:auto; padding: 4px 2px 14px; margin-bottom: 6px;
+}
+.game-lb-chip{
+  display:flex; align-items:center; gap:7px; flex-shrink:0; padding: 6px 12px 6px 8px;
+  background: var(--glass); border:1px solid var(--glass-border); border-radius:999px;
+  font-size:.8rem; font-weight:800; color: var(--ink-soft); transition: box-shadow .2s ease, border-color .2s ease;
+}
+.game-lb-chip.me{ border-color: rgba(34,211,238,.4); box-shadow: var(--glow-cyan); color: var(--ink); }
+.game-lb-chip.left{ opacity:.45; }
+.game-lb-rank{ font-family: var(--font-display); color: var(--c-orange); font-size:.75rem; }
+.game-lb-score{ color: var(--c-green); font-family: var(--font-display); }
+
+/* ---- Lobby ---- */
+.game-room-code-big{
+  text-align:center; font-family: var(--font-display); font-size:1.9rem; font-weight:800;
+  letter-spacing:.1em; color: var(--c-cyan); margin: 6px 0 18px;
+  text-shadow: 0 0 24px rgba(34,211,238,.35);
+}
+.game-lobby-slots{ display:grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap:12px; margin-bottom:6px; }
+.game-slot{
+  display:flex; flex-direction:column; align-items:center; gap:8px; padding: 18px 10px;
+  border-radius: var(--radius-md); font-weight:800; font-size:.85rem; text-align:center;
+}
+.game-slot.filled{ background: var(--glass-2); border: 1px solid rgba(52,211,153,.35); box-shadow: var(--glow-green); color: var(--ink); }
+.game-slot.empty{ border: 1.5px dashed var(--glass-border); color: var(--ink-mute); }
+.game-lobby-actions{ display:flex; flex-direction:column; gap:10px; margin-top:20px; }
+
+/* ---- Starting countdown ---- */
+.game-starting{ text-align:center; padding: 50px 20px; }
+.game-countdown-num{
+  font-family: var(--font-display); font-size: 5rem; font-weight:800;
+  background: var(--grad-brand); -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation: fx-pulse .9s ease-in-out infinite;
+}
+
+/* ---- Question ---- */
+.game-round-label{ display:flex; align-items:center; justify-content:space-between; font-weight:800; color: var(--ink-soft); font-size:.85rem; margin-bottom:6px; }
+.game-timer-num{ font-family: var(--font-display); font-size:1.1rem; color: var(--c-green); }
+.game-timer-fill{ transition: width .3s linear, background .3s ease; }
+.game-timer-fill.urgent{ background: linear-gradient(90deg, var(--danger), var(--c-orange)); box-shadow: 0 0 12px rgba(251,113,133,.5); }
+
+/* ---- Reveal ---- */
+.game-reveal-word{ text-align:center; font-size:1.3rem; font-weight:800; margin-bottom:16px; }
+.game-reveal-word strong{ color: var(--c-green); }
+.game-reveal-results{ display:flex; flex-direction:column; gap:8px; }
+.game-reveal-row{
+  display:flex; align-items:center; gap:10px; padding: 8px 12px;
+  background: var(--glass-2); border-radius: var(--radius-sm); border:1px solid var(--glass-border);
+}
+.game-reveal-row.me{ border-color: rgba(34,211,238,.4); box-shadow: var(--glow-cyan); }
+.game-reveal-name{ font-weight:800; flex:1; }
+.game-reveal-status{ font-size:1.1rem; }
+.game-reveal-points{ font-family: var(--font-display); color: var(--c-green); font-weight:800; min-width:3ch; text-align:right; }
+
+/* ---- Finished / podium ---- */
+.game-podium{ display:flex; align-items:flex-end; justify-content:center; gap:14px; margin: 22px 0 10px; }
+.game-podium-spot{
+  display:flex; flex-direction:column; align-items:center; gap:6px; padding: 16px 14px;
+  background: var(--glass-2); border:1px solid var(--glass-border); border-radius: var(--radius-md);
+  min-width:100px;
+}
+.game-podium-spot.spot-1{ order:2; padding-top:26px; border-color: rgba(251,146,60,.4); box-shadow: var(--glow-orange); }
+.game-podium-spot.spot-2{ order:1; }
+.game-podium-spot.spot-3{ order:3; }
+.game-podium-medal{ font-size:2rem; }
+.game-podium-name{ font-weight:800; font-family: var(--font-display); font-size:.9rem; }
+.game-podium-score{ color: var(--c-green); font-weight:800; }
+.game-final-list{ display:flex; flex-direction:column; gap:6px; margin-top:14px; }
+.game-final-row{
+  display:flex; align-items:center; gap:10px; padding: 8px 12px;
+  border-radius: var(--radius-sm); font-weight:700; color: var(--ink-soft);
+}
+.game-final-row.me{ background: var(--glass-2); color: var(--ink); border:1px solid rgba(34,211,238,.35); }
+.game-final-name{ flex:1; }
+.game-final-score{ color: var(--c-green); font-family: var(--font-display); }
+
+@media (max-width: 480px){
+  .game-id-display{ font-size:1.9rem; }
+  .game-podium{ gap:8px; }
+  .game-podium-spot{ min-width:84px; padding:12px 8px; }
+  .game-podium-spot.spot-1{ padding-top:18px; }
+}

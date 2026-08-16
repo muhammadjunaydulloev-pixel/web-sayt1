@@ -2,6 +2,7 @@
 import hashlib
 import hmac
 import os
+import random
 from datetime import datetime, timezone
 
 from database.db import execute, query_one, query_all
@@ -35,13 +36,27 @@ def get_user_by_id(user_id: int):
     return query_one("SELECT * FROM users WHERE id = ?", (user_id,))
 
 
+def _new_game_code() -> str:
+    """A unique, memorable 6-digit ID every user gets for the Мусобиқа
+    (competition) feature — friends invite each other by typing it in."""
+    while True:
+        code = str(random.randint(100000, 999999))
+        if not query_one("SELECT id FROM users WHERE game_code = ?", (code,)):
+            return code
+
+
 def create_user(full_name: str, phone: str, password: str, is_admin: bool = False):
     execute(
-        "INSERT INTO users (full_name, phone, password_hash, is_admin, paid, joined_at) "
-        "VALUES (?, ?, ?, ?, 0, ?)",
-        (full_name.strip(), phone.strip(), hash_password(password), 1 if is_admin else 0, _now()),
+        "INSERT INTO users (full_name, phone, password_hash, is_admin, paid, joined_at, game_code) "
+        "VALUES (?, ?, ?, ?, 0, ?, ?)",
+        (full_name.strip(), phone.strip(), hash_password(password), 1 if is_admin else 0, _now(),
+         _new_game_code()),
     )
     return get_user_by_phone(phone.strip())
+
+
+def get_user_by_game_code(code: str):
+    return query_one("SELECT * FROM users WHERE game_code = ?", (code.strip(),))
 
 
 def authenticate(phone: str, password: str):

@@ -29,6 +29,11 @@
           </a>
         {% else %}
           <a href="/lessons" class="nav-link {% if request.url.path.startswith('/lessons') %}active{% endif %}" aria-label="Дарсҳо" {% if request.url.path.startswith('/lessons') %}aria-current="page"{% endif %}>{{ icon('book') }} Дарсҳо</a>
+          <a href="/game" class="nav-link {% if request.url.path.startswith('/game') %}active{% endif %}" aria-label="Мусобиқа" {% if request.url.path.startswith('/game') %}aria-current="page"{% endif %}>
+            {{ icon('zap') }} Мусобиқа
+            {% set gi = nav_game_invites(request) %}
+            {% if gi %}<span class="nav-badge">{{ gi }}</span>{% endif %}
+          </a>
           <a href="/profile" class="nav-link {% if request.url.path.startswith('/profile') %}active{% endif %}" aria-label="Профил" {% if request.url.path.startswith('/profile') %}aria-current="page"{% endif %}>{{ icon('user') }} Профил</a>
           <a href="/chat" class="nav-link {% if request.url.path.startswith('/chat') %}active{% endif %}" aria-label="Чат" {% if request.url.path.startswith('/chat') %}aria-current="page"{% endif %}>
             {{ icon('message') }} Чат
@@ -73,6 +78,11 @@
   {% else %}
     <a href="/lessons" class="tabbar-item {% if request.url.path.startswith('/lessons') %}active{% endif %}" aria-label="Дарсҳо" {% if request.url.path.startswith('/lessons') %}aria-current="page"{% endif %}>
       <span class="tabbar-icon">{{ icon('book') }}</span><span>Дарсҳо</span>
+    </a>
+    <a href="/game" class="tabbar-item {% if request.url.path.startswith('/game') %}active{% endif %}" aria-label="Мусобиқа" {% if request.url.path.startswith('/game') %}aria-current="page"{% endif %}>
+      <span class="tabbar-icon">{{ icon('zap') }}</span><span>Мусобиқа</span>
+      {% set gi = nav_game_invites(request) %}
+      {% if gi %}<span class="tabbar-badge">{{ gi }}</span>{% endif %}
     </a>
     <a href="/profile" class="tabbar-item {% if request.url.path.startswith('/profile') %}active{% endif %}" aria-label="Профил" {% if request.url.path.startswith('/profile') %}aria-current="page"{% endif %}>
       <span class="tabbar-icon">{{ icon('user') }}</span><span>Профил</span>

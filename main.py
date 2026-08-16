@@ -18,11 +18,13 @@ from services import (
     payment_service, chat_service,
 )
 from routers import admin as admin_router
+from routers import games as games_router
 
 app = FastAPI(title="1300 Луғат — Русӣ-Тоҷикӣ")
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY, session_cookie="slovarho_session")
 app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 app.include_router(admin_router.router)
+app.include_router(games_router.router)
 
 
 @app.exception_handler(RedirectException)
