@@ -25,6 +25,8 @@
     <span class="badge badge-muted">Ҳуҷра #{{ room_code }}</span>
   </div>
 
+  <div id="game-debug" class="game-debug-banner" style="display:none;"></div>
+
   <div id="game-leaderboard" class="game-leaderboard-strip"></div>
 
   <!-- LOBBY -->
@@ -281,12 +283,29 @@
   }
 
   async function poll(){
+    const debugBox = document.getElementById('game-debug');
     try{
       const res = await fetch(`/api/game/room/${roomCode}/state`);
-      if(!res.ok){ return; }
+      if(!res.ok){
+        let msg = 'HTTP хатогии ' + res.status;
+        try{ const j = await res.json(); if(j && j.error) msg = j.error; }catch(parseErr){}
+        debugBox.style.display = '';
+        debugBox.textContent = 'Хатои сервер: ' + msg;
+        setTimeout(poll, 1500);
+        return;
+      }
       const state = await res.json();
-      render(state);
-    }catch(e){ /* retry next tick */ }
+      try{
+        render(state);
+        debugBox.style.display = 'none';
+      }catch(renderErr){
+        debugBox.style.display = '';
+        debugBox.textContent = 'Хатои саҳифа: ' + (renderErr && renderErr.message ? renderErr.message : String(renderErr));
+      }
+    }catch(networkErr){
+      debugBox.style.display = '';
+      debugBox.textContent = 'Хатои пайваст: ' + (networkErr && networkErr.message ? networkErr.message : String(networkErr));
+    }
     setTimeout(poll, 1000);
   }
 

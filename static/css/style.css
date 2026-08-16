@@ -1337,6 +1337,11 @@ th{ font-family: var(--font-display); color: var(--ink-soft); font-size:.78rem; 
 .game-shell{ padding-bottom: 20px; }
 .game-topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
 .game-hint{ text-align:center; color: var(--ink-soft); font-size:.88rem; font-weight:700; margin: 10px 0 0; }
+.game-debug-banner{
+  background: rgba(251,113,133,.12); border:1px solid rgba(251,113,133,.4); color: #fecdd3;
+  padding: 12px 14px; border-radius: var(--radius-sm); font-size:.82rem; font-weight:700;
+  margin-bottom: 14px; word-break: break-word;
+}
 
 .game-leaderboard-strip{
   display:flex; gap:8px; overflow-x:auto; padding: 4px 2px 14px; margin-bottom: 6px;
